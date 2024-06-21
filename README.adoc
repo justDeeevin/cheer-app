@@ -1,0 +1,4 @@
+= CHEER Community Garden Produce Collection App
+Devin Droddy <devin.droddy@gmail.com>
+
+This is a mobile app made with React Native for CHEER Community Garden volunteers to record and upload information about their collected produce.
