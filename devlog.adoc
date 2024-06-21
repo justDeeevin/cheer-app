@@ -20,7 +20,7 @@ https://reactnative.dev/docs/environment-setup[The React Native docs] recommend 
 .A side note
 [%collapsible]
 ====
-This highlights one of my gripes with the JS ecosystem. I find that it's really easy to get into messy situations with dependencies, especially when Bun and Node get mixed. The errors never help. At least starting over pretty consistently fixes things.
+This highlights one of my gripes with the JS ecosystem. I find that it's really easy to get into messy situations with dependencies, especially when Bun and Node get mixed. The error messages never help. At least starting over pretty consistently fixes things.
 ====
 
 === A Camera Component
