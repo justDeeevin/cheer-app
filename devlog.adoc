@@ -15,7 +15,7 @@ I chose to use React Native for two simple reasons: it's cross-platform and I'm 
 
 === Getting Started - 2024-06-20
 
-https://reactnative.dev/docs/environment-setup[The React Native docs] recomment using https://expo.dev[the Expo framework]. I got it set up and running with https://bun.sh[the Bun runtime]. I found that I had to use `expo start` with the `--tunnel` flag to get hot-reloading working. This appears to be a fairly common necessity stemming from any number of local or network-wide configurations. The Expo docs claim it slows down hot-reloading, but it's been pretty speedy for me. Overall, I'm not too concerned by `--tunnel`. I did have some trouble with an `ngrok` dependency for the `--tunnel` feature, but I fixed it by re-initializing the repo and installing it in the project specifically with `bun install`.
+https://reactnative.dev/docs/environment-setup[The React Native docs] recommend using https://expo.dev[the Expo framework]. I got it set up and running with https://bun.sh[the Bun runtime]. I found that I had to use `expo start` with the `--tunnel` flag to get hot-reloading working. This appears to be a fairly common necessity stemming from any number of local or network-wide configurations. The Expo docs claim it slows down hot-reloading, but it's been pretty speedy for me. Overall, I'm not too concerned by `--tunnel`. I did have some trouble with an `ngrok` dependency for the `--tunnel` feature, but I fixed it by re-initializing the repo and installing it in the project specifically with `bun install`.
 
 .A side note
 [%collapsible]
