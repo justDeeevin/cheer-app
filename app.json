@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera"
-      }
+      },
+      "bundleIdentifier": "com.justdeeevin.cheerapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -35,7 +36,8 @@
     },
     "plugins": [
       "expo-router",
-      "react-native-vision-camera"
+      "react-native-vision-camera",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true

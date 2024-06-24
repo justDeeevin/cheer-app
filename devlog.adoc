@@ -1,11 +1,12 @@
 = CHEER App Devlog
 Devin Droddy <devin.droddy@gmail.com>
 :toc:
-:tocdepth: 5
+:toclevels: 5
 
 :shrug: ¯\_(ツ)_/¯
 
 == Part 1: Making React Native Happen
+Or, making the frontend.
 
 image::https://media0.giphy.com/media/5G98t8QjqBLK8/giphy.gif[Stop trying to make fetch happen GIF, 400]
 
@@ -32,3 +33,23 @@ A core function of the app is the ability to take a picture with the phone camer
 Initially, I thought something like a camera view would be simple. I thought that many system-interaction components would be provided by the OS (hence "Native"). I was wrong. I had to find a pre-made library for a camera view component and functions for handling camera permissions and image capture. I arrived at https://react-native-vision-camera.com/[VisionCamera], since it seemed like the highest-quality option. Since it "relies on native code" footnote:[See https://github.com/mrousavy/react-native-vision-camera/issues/2670[this issue]], I have to use a https://docs.expo.dev/develop/development-builds/introduction/[development build] instead of https://docs.expo.dev/get-started/set-up-your-environment/[Expo Go]. Initially, I thought this meant rebuilding for any changes, but once I actually started reading the docs (and once I had an actual development build on my phone), I understood how it really works: it's just hot-reloading but in its own dedicated app. {shrug}
 
 I ended the night with a working camera view. It just shows what the camera currently sees. There's also a dedicated page for requesting camera permissions. This all works on the development build.
+
+==== Taking a Photo - 2024-06-21
+
+I followed the VisionCamera docs to begin the code to take a photo. I started by trying to make a button that calls `takePhoto()`, but I was having problems that I thought were related to plugging an async function into a react-native `Button` component's `onPress` prop. I tried plugging in a sync function and got the same error. I read the docs, and it turns out the native button component actually doesn't take any child components, just a `title` prop for the text with which to label the button.
+
+The `takePhoto` function saves the photo to a temporary file and returns an object with some image data and a `path` property. To demonstrate the basic photo capture functionality, I added a stateful vairable `photo` and a conditionally rendered `Image` component that displays the image at the path returned by `takePhoto`.
+
+=== OAuth
+
+Another core feature of the app is tracking _who_ is submitting data, on top of simply tracking attendance at harvests. In the interest of not rolling my own auth, I decided to stick with OAuth, starting with Google and ICloud (for ease of use with Android and iOS systems respectively).
+
+==== Getting Started with Google OAuth - 2024-06-21
+
+I've never worked with any sort of authentication system before, so I've got a lot of learning to do. I decided to start with Google OAuth because I'm more familiar with their account systems and UI standards (I anticipate having to work with some sort of app management site). I found https://github.com/react-native-google-signin/google-signin[Google's own React Native sign-in library], which has setup documentation for Expo. The Expo docs themselves also have setup info for Google signin. I followed https://www.youtube.com/watch?v=BDeKTPQzvR4&t=562s[this video] for the most part. Notably, I got the SHA-1 certificate fingerprint from the EAS keystore, and I'm not making a webapp so I didn't do any of the web configuration.
+
+==== Back on the Horse - 2024-06-24
+
+I took a couple of days off, but I got back to work with a proper schedule in place. The first thing I did was establish tab navigation in the app, following https://docs.expo.dev/router/advanced/tabs/[the docs]. Then, on the 'User' page, I continued following the aformentioned tutorial video. At the point where the actual Google APIs begin to be used, I began encountering errors. At this point, I decided to look for a different source. I thought that I might be watching a video that was out-of-date or simply didn't quite have what I was looking for. This was mainly sparked by the realization that the repo I mentioned earlier wasn't mentioned in the video. So, I found https://www.youtube.com/watch?v=vojHmGUGUGc[a different tutorial posted by Supabase] that used that repo, rolled back my code to the working camera, and started fresh.
+
+This worked out great. Using the google sign-in button is very straightforward. I prematurely shut down the google cloud project thinking I didn't need it, but I lost very little progress.
