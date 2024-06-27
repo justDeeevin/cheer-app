@@ -5,6 +5,8 @@ Devin Droddy <devin.droddy@gmail.com>
 
 :shrug: ¯\_(ツ)_/¯
 
+:secret_footnote: Expo recommends uploading the Firebase config file to EAS as a secret. I did that, it was easy. But, it turns out that you have to use an `app.config.js` file to use secrets as part of the app config. I saw in the docs that you could use `app.json` then just add to it in the js file, but I couldn't quite get it to work. I just ended up copying the entire `app.json` file into the `app.config.js` file and it worked.
+
 == Part 1: Making React Native Happen
 Or, making the frontend.
 
@@ -48,8 +50,18 @@ Another core feature of the app is tracking _who_ is submitting data, on top of 
 
 I've never worked with any sort of authentication system before, so I've got a lot of learning to do. I decided to start with Google OAuth because I'm more familiar with their account systems and UI standards (I anticipate having to work with some sort of app management site). I found https://github.com/react-native-google-signin/google-signin[Google's own React Native sign-in library], which has setup documentation for Expo. The Expo docs themselves also have setup info for Google signin. I followed https://www.youtube.com/watch?v=BDeKTPQzvR4&t=562s[this video] for the most part. Notably, I got the SHA-1 certificate fingerprint from the EAS keystore, and I'm not making a webapp so I didn't do any of the web configuration.
 
-==== Back on the Horse - 2024-06-24
+==== A Button that Works - 2024-06-24
 
 I took a couple of days off, but I got back to work with a proper schedule in place. The first thing I did was establish tab navigation in the app, following https://docs.expo.dev/router/advanced/tabs/[the docs]. Then, on the 'User' page, I continued following the aformentioned tutorial video. At the point where the actual Google APIs begin to be used, I began encountering errors. At this point, I decided to look for a different source. I thought that I might be watching a video that was out-of-date or simply didn't quite have what I was looking for. This was mainly sparked by the realization that the repo I mentioned earlier wasn't mentioned in the video. So, I found https://www.youtube.com/watch?v=vojHmGUGUGc[a different tutorial posted by Supabase] that used that repo, rolled back my code to the working camera, and started fresh.
 
 This worked out great. Using the google sign-in button is very straightforward. I prematurely shut down the google cloud project thinking I didn't need it, but I lost very little progress. Right now, I can get google user info by signing in using google play services on the device.
+
+==== Switching to Firebase - 2024-06-25
+
+This was a pretty bad day. I slept in, so I got a late start. It was also the release of the Riven remake, so I had to wait for the game to download (21GB) before I could start working (not multitasking on the desktop allowed the install to go quickly). All of this meant that I had half the normal time to get anything done. Nonetheless, I persisted. My goal for the day was to specify a client ID for the Google signin so that a consent screen would appear (still just following a tutorial). The thing is, the video was also a bit dated, so it took some digging to figure out how to configure my app to use the right client ID. I eventually found https://developers.google.com/identity/android-credential-manager#configure-a-google-api-console-project[this page]. Turns out the right way to do this stuff on Android is now "Credential Manager", but the only information I could find about working with that is for Android studio, not Expo. I slowed down a bit, and looked at my options. I realized that, through all of this process, I had been jumping past instructions for "with Firebase" that looked much simpler. So, I decided I would try to work with Firebase instead of Google Cloud. This allowed me to avoid going over to credential manager, and still follow along with the same video.
+
+Or so I thought. It took some work footnote:[{secret_footnote}], but I got the Firebase config into the app config. Even still, I got no OAuth consent screen. Thus, I decided to try and find tutorials for authentication in Firebase, not worrying about Expo.
+
+==== Successfully Linking the Client ID - 2024-06-26
+
+I found https://www.youtube.com/watch?v=HY3O_wrvDsI[this video] that was exactly what I was looking for. Google signin in expo with firebase. There was a bit of hassle, but I finally confirmed that the app was using the right client ID by having the sign-in button use a Google Drive read-only scope, and seeing that the OAuth consent screen had the correct app name.

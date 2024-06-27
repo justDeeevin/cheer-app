@@ -9,12 +9,12 @@ export default function Index() {
 
   const { hasPermission } = useCameraPermission();
   const device = useCameraDevice("back");
+  const cameraRef = useRef<Camera>(null);
 
   if (!hasPermission) return <PermissionsPage />;
 
   if (device === undefined) return <Text>No camera found</Text>;
 
-  const cameraRef = useRef<Camera>(null);
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
