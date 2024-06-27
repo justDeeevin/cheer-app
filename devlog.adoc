@@ -65,3 +65,7 @@ Or so I thought. It took some work footnote:[{secret_footnote}], but I got the F
 ==== Successfully Linking the Client ID - 2024-06-26
 
 I found https://www.youtube.com/watch?v=HY3O_wrvDsI[this video] that was exactly what I was looking for. Google signin in expo with firebase. There was a bit of hassle, but I finally confirmed that the app was using the right client ID by having the sign-in button use a Google Drive read-only scope, and seeing that the OAuth consent screen had the correct app name.
+
+==== Successful Firebase sign-in - 2024-06-27
+
+I started by removing the google sign-in plugin from the app, and following Firebase's web docs by using the `signInWithPopup` function. That didn't work, and I soon found out that was because that is a web-only function that creates a new browser pop-up window. Instead, the correct way to do it in react native is to use the google sign-in button, then use the `GoogleAuthProvider.credential` function to create an `AuthCredential` based on the tokens provided by the `GoogleSignin` object from the react native google sign-in library. We are now successfully authenticating users and registering new ones using Google OAuth. B)
