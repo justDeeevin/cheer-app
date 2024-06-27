@@ -10,6 +10,7 @@ import { auth } from "@/firebaseConfig";
 
 export default function User() {
   const [user, setUser] = useState<GoogleUser>();
+  const [error, setError] = useState<string>();
   useEffect(GoogleSignin.configure, []);
 
   const provider = new GoogleAuthProvider();
@@ -20,15 +21,21 @@ export default function User() {
   };
 
   const signInGoogle = async () => {
-    await GoogleSignin.hasPlayServices();
-    let user = await GoogleSignin.signIn();
-    let cred = GoogleAuthProvider.credential(user.idToken);
-    let res = await signInWithCredential(auth, cred);
-    setUser(res.user);
+    try {
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn();
+      const tokens = await GoogleSignin.getTokens();
+      const cred = GoogleAuthProvider.credential(tokens.idToken, tokens.accessToken);
+      const res = await signInWithCredential(auth, cred);
+      setUser(res.user);
+    } catch (e: any) {
+      setError(JSON.stringify(e));
+    }
   };
 
   return <View>
     {user && <Text> Hello {user.email} </Text>}
+    {error && <Text> {error} </Text>}
     <Button title="Sign in with email" onPress={signInEmail} />
     <GoogleSigninButton
       size={GoogleSigninButton.Size.Wide}
