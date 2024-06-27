@@ -1,47 +1,39 @@
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithCredential, User as GoogleUser } from 'firebase/auth';
 import {
   GoogleSignin,
   GoogleSigninButton,
-  User as GoogleUser,
   statusCodes
 } from '@react-native-google-signin/google-signin';
-import { GoogleAuthProvider } from 'firebase/auth';
-import { useEffect, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
+import { auth } from "@/firebaseConfig";
 
 export default function User() {
-  const [userInfo, setUserInfo] = useState<GoogleUser>();
-  const [error, setError] = useState<string>();
-
-  useEffect(() => GoogleSignin.configure({
-    scopes: ['https://www.googleapis.com/auth/drive']
-  }), []);
-
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      setUserInfo(await GoogleSignin.signIn());
-    } catch (e: any) {
-      switch (e.code) {
-        case statusCodes.SIGN_IN_CANCELLED:
-          setError('Sign in cancelled');
-        case statusCodes.IN_PROGRESS:
-          setError('Sign in in progress');
-        case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-          setError('Play services not available');
-        default:
-          setError(JSON.stringify(e));
-      }
-    }
-  };
+  const [user, setUser] = useState<GoogleUser>();
+  useEffect(GoogleSignin.configure, []);
 
   const provider = new GoogleAuthProvider();
 
-  return <ScrollView>
-    {userInfo && <Text> Hello {userInfo.user.name} </Text>}
+  const signInEmail = async () => {
+    const res = await signInWithEmailAndPassword(auth, 'devin.droddy@gmail.com', '123456');
+    setUser(res.user);
+  };
+
+  const signInGoogle = async () => {
+    await GoogleSignin.hasPlayServices();
+    let user = await GoogleSignin.signIn();
+    let cred = GoogleAuthProvider.credential(user.idToken);
+    let res = await signInWithCredential(auth, cred);
+    setUser(res.user);
+  };
+
+  return <View>
+    {user && <Text> Hello {user.email} </Text>}
+    <Button title="Sign in with email" onPress={signInEmail} />
     <GoogleSigninButton
       size={GoogleSigninButton.Size.Wide}
       color={GoogleSigninButton.Color.Dark}
-      onPress={signIn}
+      onPress={signInGoogle}
     />
-  </ScrollView>;
+  </View>;
 }
