@@ -17,6 +17,7 @@ export default {
       NSCameraUsageDescription: "Allow $(PRODUCT_NAME) to access your camera",
     },
     bundleIdentifier: "com.justdeeevin.cheerapp",
+    usesAppleSignin: true,
   },
   android: {
     adaptiveIcon: {
@@ -34,6 +35,8 @@ export default {
   },
   plugins: [
     "expo-router",
+    "expo-apple-authentication",
+    "expo-secure-store",
     "react-native-vision-camera",
     "@react-native-google-signin/google-signin",
   ],
