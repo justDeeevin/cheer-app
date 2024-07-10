@@ -17,7 +17,7 @@ import { User as UserInfo } from '@/types/firestore';
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
   const [userInfo, setUserInfo] = useState<UserInfo>();
-  const [fireUser, setFireUser] = useState<FireUser>(auth.currentUser as FireUser);
+  const [fireUser, setFireUser] = useState<FireUser | undefined>(auth.currentUser as FireUser);
   const [appleUser, setAppleUser] = useState<Apple.AppleAuthenticationCredential>();
   // const [error, setError] = useState<string>();
 
