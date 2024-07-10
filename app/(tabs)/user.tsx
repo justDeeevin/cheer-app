@@ -110,13 +110,11 @@ export default function User() {
       color={GoogleSigninButton.Color.Dark}
       onPress={signInGoogle}
     />}
-    {
-      Platform.OS === 'ios' &&
-      <Apple.AppleAuthenticationButton
-        buttonType={Apple.AppleAuthenticationButtonType.SIGN_IN}
-        buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
-        onPress={signInApple}
-      />
-    }
+    {/* Will not render if apple authentication isn't available :D */}
+    <Apple.AppleAuthenticationButton
+      buttonType={Apple.AppleAuthenticationButtonType.SIGN_IN}
+      buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
+      onPress={signInApple}
+    />
   </View >;
 }
