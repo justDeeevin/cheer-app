@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { View, Text, Platform, ActivityIndicator } from 'react-native';
-
-import { auth, db } from "@/firebaseConfig";
+import { useState, useEffect, useContext } from 'react';
+import { View, Text, Platform, ActivityIndicator, Button } from 'react-native';
+import { firebaseContext } from '@/context';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential, User as FireUser } from 'firebase/auth';
 import {
   GoogleSignin,
@@ -16,36 +15,12 @@ import * as SecureStore from 'expo-secure-store';
 import { User as UserInfo } from '@/types/firestore';
 
 export default function User() {
+  const { auth, db } = useContext(firebaseContext);
   const [userInfo, setUserInfo] = useState<UserInfo>();
-  const [fireUser, setFireUser] = useState<FireUser>();
+  const [fireUser, setFireUser] = useState<FireUser>(auth.currentUser as FireUser);
   const [appleUser, setAppleUser] = useState<Apple.AppleAuthenticationCredential>();
   // const [error, setError] = useState<string>();
 
-  useEffect(() => {
-    const effect = async () => {
-      const credentialType = await SecureStore.getItemAsync('authProvider');
-      if (credentialType === 'Google') {
-        const idToken = await SecureStore.getItemAsync('idToken');
-        const accessToken = await SecureStore.getItemAsync('accessToken');
-        const cred = GoogleAuthProvider.credential(idToken, accessToken);
-        const res = await signInWithCredential(auth, cred);
-        setFireUser(res.user);
-      }
-      else if (credentialType === 'Apple') {
-        const idToken = await SecureStore.getItemAsync('idToken') as string;
-        const accessToken = await SecureStore.getItemAsync('accessToken') as string;
-        const firebaseCred = new OAuthProvider('apple.com')
-          .credential({
-            idToken,
-            accessToken
-          });
-        const res = await signInWithCredential(auth, firebaseCred);
-        setFireUser(res.user);
-      }
-    }
-
-    effect()
-  }, [])
   useEffect(GoogleSignin.configure, []);
 
   useEffect(() => {
