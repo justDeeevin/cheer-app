@@ -6,7 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
 
 export default function TabLayout() {
-  const { auth, db } = useContext(firebaseContext);
+  const { auth } = useContext(firebaseContext);
 
   useEffect(() => {
     const effect = async () => {
@@ -35,23 +35,21 @@ export default function TabLayout() {
   }, [])
 
   return (
-    <firebaseContext.Provider value={{ auth, db }}>
-      <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="user"
-          options={{
-            title: 'User',
-            tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
-          }}
-        />
-      </Tabs>
-    </firebaseContext.Provider>
+    <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="user"
+        options={{
+          title: 'User',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+        }}
+      />
+    </Tabs>
   );
 }
