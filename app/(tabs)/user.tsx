@@ -47,9 +47,9 @@ export default function User() {
     effect()
   }, [])
   useEffect(GoogleSignin.configure, []);
+
   useEffect(() => {
     const effect = async () => {
-
       if (fireUser) {
         let userInfo = (await getDoc(doc(db, 'people', fireUser.uid))).data() as UserInfo | undefined;
         if (!userInfo) {
@@ -110,8 +110,24 @@ export default function User() {
     setFireUser(res.user);
   }
 
-  return <View>
-    {userInfo && fireUser && <Text> Hello {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>}
+  const signOut = async () => {
+    await auth.signOut();
+    setFireUser(undefined);
+    setUserInfo(undefined);
+    if ((await SecureStore.getItemAsync('authProvider')) === 'Google') {
+      await GoogleSignin.signOut();
+    }
+
+    await SecureStore.deleteItemAsync('authProvider');
+    await SecureStore.deleteItemAsync('idToken');
+    await SecureStore.deleteItemAsync('accessToken');
+  }
+
+  return <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    {userInfo && fireUser && <>
+      <Text> Hello {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>
+      <Button title="SIGN OUT" onPress={signOut} />
+    </>}
     {fireUser && !userInfo && <ActivityIndicator />}
     {/*error && <Text> {error} </Text>*/}
     {!fireUser && <GoogleSigninButton
