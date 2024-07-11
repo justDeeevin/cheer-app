@@ -7,16 +7,11 @@ Devin Droddy <devin.droddy@gmail.com>
 
 :secret_footnote: Expo recommends uploading the Firebase config file to EAS as a secret. I did that, it was easy. But, it turns out that you have to use an `app.config.js` file to use secrets as part of the app config. I saw in the docs that you could use `app.json` then just add to it in the js file, but I couldn't quite get it to work. I just ended up copying the entire `app.json` file into the `app.config.js` file and it worked.
 
-== Part 1: Making React Native Happen
-Or, making the frontend.
-
-image::https://media0.giphy.com/media/5G98t8QjqBLK8/giphy.gif[Stop trying to make fetch happen GIF, 400]
-
-=== Why React Native?
+== Why React Native?
 
 I chose to use React Native for two simple reasons: it's cross-platform and I'm already familiar with the React workflow. I'm open to the idea that there are better alternatives, but I feel like React Native is a safe place to start.
 
-=== Getting Started - 2024-06-20
+== Getting Started - 2024-06-20
 
 https://reactnative.dev/docs/environment-setup[The React Native docs] recommend using https://expo.dev[the Expo framework]. I got it set up and running with https://bun.sh[the Bun runtime]. I found that I had to use `expo start` with the `--tunnel` flag to get hot-reloading working. This appears to be a fairly common necessity stemming from any number of local or network-wide configurations. The Expo docs claim it slows down hot-reloading, but it's been pretty speedy for me. Overall, I'm not too concerned by `--tunnel`. I did have some trouble with an `ngrok` dependency for the `--tunnel` feature, but I fixed it by re-initializing the repo and installing it in the project specifically with `bun install`.
 
@@ -26,59 +21,59 @@ https://reactnative.dev/docs/environment-setup[The React Native docs] recommend 
 This highlights one of my gripes with the JS ecosystem. I find that it's really easy to get into messy situations with dependencies, especially when Bun and Node get mixed. The error messages never help. At least starting over pretty consistently fixes things.
 ====
 
-=== A Camera Component
+== A Camera Component
 
 A core function of the app is the ability to take a picture with the phone camera and process the image data. Thus, there needs to be some camera view in the app.
 
-==== Starting with VisionCamera - 2024-06-20
+=== Starting with VisionCamera - 2024-06-20
 
 Initially, I thought something like a camera view would be simple. I thought that many system-interaction components would be provided by the OS (hence "Native"). I was wrong. I had to find a pre-made library for a camera view component and functions for handling camera permissions and image capture. I arrived at https://react-native-vision-camera.com/[VisionCamera], since it seemed like the highest-quality option. Since it "relies on native code" footnote:[See https://github.com/mrousavy/react-native-vision-camera/issues/2670[this issue]], I have to use a https://docs.expo.dev/develop/development-builds/introduction/[development build] instead of https://docs.expo.dev/get-started/set-up-your-environment/[Expo Go]. Initially, I thought this meant rebuilding for any changes, but once I actually started reading the docs (and once I had an actual development build on my phone), I understood how it really works: it's just hot-reloading but in its own dedicated app. {shrug}
 
 I ended the night with a working camera view. It just shows what the camera currently sees. There's also a dedicated page for requesting camera permissions. This all works on the development build.
 
-==== Taking a Photo - 2024-06-21
+=== Taking a Photo - 2024-06-21
 
 I followed the VisionCamera docs to begin the code to take a photo. I started by trying to make a button that calls `takePhoto()`, but I was having problems that I thought were related to plugging an async function into a react-native `Button` component's `onPress` prop. I tried plugging in a sync function and got the same error. I read the docs, and it turns out the native button component actually doesn't take any child components, just a `title` prop for the text with which to label the button.
 
 The `takePhoto` function saves the photo to a temporary file and returns an object with some image data and a `path` property. To demonstrate the basic photo capture functionality, I added a stateful vairable `photo` and a conditionally rendered `Image` component that displays the image at the path returned by `takePhoto`.
 
-=== OAuth
+== OAuth
 
 Another core feature of the app is tracking _who_ is submitting data, on top of simply tracking attendance at harvests. In the interest of not rolling my own auth, I decided to stick with OAuth, starting with Google and ICloud (for ease of use with Android and iOS systems respectively).
 
-==== Getting Started with Google OAuth - 2024-06-21
+=== Getting Started with Google OAuth - 2024-06-21
 
 I've never worked with any sort of authentication system before, so I've got a lot of learning to do. I decided to start with Google OAuth because I'm more familiar with their account systems and UI standards (I anticipate having to work with some sort of app management site). I found https://github.com/react-native-google-signin/google-signin[Google's own React Native sign-in library], which has setup documentation for Expo. The Expo docs themselves also have setup info for Google signin. I followed https://www.youtube.com/watch?v=BDeKTPQzvR4&t=562s[this video] for the most part. Notably, I got the SHA-1 certificate fingerprint from the EAS keystore, and I'm not making a webapp so I didn't do any of the web configuration.
 
-==== A Button that Works - 2024-06-24
+=== A Button that Works - 2024-06-24
 
 I took a couple of days off, but I got back to work with a proper schedule in place. The first thing I did was establish tab navigation in the app, following https://docs.expo.dev/router/advanced/tabs/[the docs]. Then, on the 'User' page, I continued following the aformentioned tutorial video. At the point where the actual Google APIs begin to be used, I began encountering errors. At this point, I decided to look for a different source. I thought that I might be watching a video that was out-of-date or simply didn't quite have what I was looking for. This was mainly sparked by the realization that the repo I mentioned earlier wasn't mentioned in the video. So, I found https://www.youtube.com/watch?v=vojHmGUGUGc[a different tutorial posted by Supabase] that used that repo, rolled back my code to the working camera, and started fresh.
 
 This worked out great. Using the google sign-in button is very straightforward. I prematurely shut down the google cloud project thinking I didn't need it, but I lost very little progress. Right now, I can get google user info by signing in using google play services on the device.
 
-==== Switching to Firebase - 2024-06-25
+=== Switching to Firebase - 2024-06-25
 
 This was a pretty bad day. I slept in, so I got a late start. It was also the release of the Riven remake, so I had to wait for the game to download (21GB) before I could start working (not multitasking on the desktop allowed the install to go quickly). All of this meant that I had half the normal time to get anything done. Nonetheless, I persisted. My goal for the day was to specify a client ID for the Google signin so that a consent screen would appear (still just following a tutorial). The thing is, the video was also a bit dated, so it took some digging to figure out how to configure my app to use the right client ID. I eventually found https://developers.google.com/identity/android-credential-manager#configure-a-google-api-console-project[this page]. Turns out the right way to do this stuff on Android is now "Credential Manager", but the only information I could find about working with that is for Android studio, not Expo. I slowed down a bit, and looked at my options. I realized that, through all of this process, I had been jumping past instructions for "with Firebase" that looked much simpler. So, I decided I would try to work with Firebase instead of Google Cloud. This allowed me to avoid going over to credential manager, and still follow along with the same video.
 
 Or so I thought. It took some work footnote:[{secret_footnote}], but I got the Firebase config into the app config. Even still, I got no OAuth consent screen. Thus, I decided to try and find tutorials for authentication in Firebase, not worrying about Expo.
 
-==== Successfully Linking the Client ID - 2024-06-26
+=== Successfully Linking the Client ID - 2024-06-26
 
 I found https://www.youtube.com/watch?v=HY3O_wrvDsI[this video] that was exactly what I was looking for. Google signin in expo with firebase. There was a bit of hassle, but I finally confirmed that the app was using the right client ID by having the sign-in button use a Google Drive read-only scope, and seeing that the OAuth consent screen had the correct app name.
 
-==== Successful Firebase sign-in - 2024-06-27
+=== Successful Firebase sign-in - 2024-06-27
 
 I started by removing the google sign-in plugin from the app, and following Firebase's web docs by using the `signInWithPopup` function. That didn't work, and I soon found out that was because that is a web-only function that creates a new browser pop-up window. Instead, the correct way to do it in react native is to use the google sign-in button, then use the `GoogleAuthProvider.credential` function to create an `AuthCredential` based on the tokens provided by the `GoogleSignin` object from the react native google sign-in library. We are now successfully authenticating users and registering new ones using Google OAuth. B)
 
-==== Caching credentials - 2024-07-03 
+=== Caching credentials - 2024-07-03 
 
 This was a simple and smooth addition. Using Expo's `SecureStorage` config plugin, we can store plaintext key-value pairs securely on the device footnote:[I'm not sure of the specifics of this library (what makes it "secure", how it works under the hood, etc.), but right now I don't need to. It may come up later, however.]. I store the `idToken`, `accessToken`, and authentication provider, and generate a Firestore credential object with that information. Right now, I don't have any proper handling of expired credentials, and the login button shows while the cached credentials are being loaded. I'm going to move onto other crucial features and take note of these issues here for later cleanup.
 
-==== App-wide auth session context - 2024-07-10
+=== App-wide auth session context - 2024-07-10
 
 Something I didn't anticipate was that the Firebase app state isn't persisted across pages with my current import method. I could just have a first-load side-effect that signs in with the cached credentials, but that feels inefficient and unnecessary. Instead, I decided to use React's `useContext` hook to create app-wide state. The app-wide layout initializes the context and passes it to the tabs screen, and the tab layout tries to log in with any cached credentials, then passes the context to the given tab. Thus, the Firebase app stays the same between pages, and the log-in only has to happen once.
 
-=== Working with a database
+== Working with a database
 
 The cloud has to store the following: (may change)
 
@@ -87,7 +82,7 @@ The cloud has to store the following: (may change)
 
 There may be a number of different approaches to these requirements. We're pretty set, however, on using Firestore, for its easy integration with our already-existing Firebase project.
 
-==== Syncing user information - 2024-07-02
+=== Syncing user information - 2024-07-02
 
 I started by having a collection of people in the database, indexed by their Firebase UID, containing their first and last name. On the user page, when the Firebase user is loaded, I check to see if that UID is in the collection. If it is, I simply get the first and last name and display them. If it isn't, I create the document and get the first and last name from the specific OAUTH provider, uploading them to the database and displaying them in the app. There were some things I learned in the process of adding this feature:
 
@@ -95,3 +90,9 @@ I started by having a collection of people in the database, indexed by their Fir
 * I got a decent handle on what kinds of data goes in and comes out of the Firestore API.
 
 Right now, I just use typecasting in the typescript code. However, in the future, it will very likely be in my interest to use Firestore rules to enforce a schema on the data. I have heard of some libraries that introduce generics to the firestore JS API, but I haven't looked too deeply into them yet. I'm not sure if that will be necessary or not.
+
+== Miscellaneous app imprrovements
+
+=== Localization - 2024-07-11
+
+A number of the CHEER's volunteers primarily speak Spanish, so proper localization is necessary. I tried using https://lingui.dev/[`lingui`], but got some strange errors with imported objects beinv undefined. I couldn't find anyone else with the same issue, so I decided to go to something else. I ended up using `i18n-js` because that's what's used in the Expo tutorial. I also created a custom hook and added a piece of context so the app would re-render when the system language changes.
