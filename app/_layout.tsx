@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router/stack';
-import { firebaseContext } from '@/context';
+import { firebaseContext } from '@/authContext';
 import { auth, db } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n'
 

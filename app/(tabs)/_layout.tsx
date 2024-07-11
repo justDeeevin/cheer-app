@@ -1,4 +1,4 @@
-import { firebaseContext } from '@/context';
+import { firebaseContext } from '@/authContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { useContext, useEffect } from 'react';

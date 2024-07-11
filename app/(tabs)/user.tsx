@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { View, Text, ActivityIndicator, Button } from 'react-native';
-import { firebaseContext } from '@/context';
+import { firebaseContext } from '@/authContext';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential, User as FireUser } from 'firebase/auth';
 import {
   GoogleSignin,
