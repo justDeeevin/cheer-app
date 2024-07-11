@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { View, Text, Platform, ActivityIndicator, Button } from 'react-native';
+import { View, Text, ActivityIndicator, Button } from 'react-native';
 import { firebaseContext } from '@/context';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential, User as FireUser } from 'firebase/auth';
 import {
@@ -14,12 +14,17 @@ import * as SecureStore from 'expo-secure-store';
 
 import { User as UserInfo } from '@/types/firestore';
 
+import { i18nContext } from '@/i18n';
+
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [fireUser, setFireUser] = useState<FireUser | undefined>(auth.currentUser as FireUser);
   const [appleUser, setAppleUser] = useState<Apple.AppleAuthenticationCredential>();
   // const [error, setError] = useState<string>();
+
+  const i18n = useContext(i18nContext);
+  const t = i18n.t.bind(i18n);
 
   useEffect(GoogleSignin.configure, []);
 
@@ -43,8 +48,8 @@ export default function User() {
           }
 
           userInfo = {
-            "first name": firstName ? firstName : '',
-            "last name": lastName ? lastName : ''
+            "first name": firstName ?? '',
+            "last name": lastName ?? ''
           }
           await setDoc(doc(db, 'people', fireUser.uid), userInfo);
 
@@ -61,8 +66,8 @@ export default function User() {
     await GoogleSignin.signIn();
     const tokens = await GoogleSignin.getTokens();
     await SecureStore.setItemAsync('authProvider', 'Google');
-    await SecureStore.setItemAsync('idToken', tokens.idToken ? tokens.idToken : '');
-    await SecureStore.setItemAsync('accessToken', tokens.accessToken ? tokens.accessToken : '');
+    await SecureStore.setItemAsync('idToken', tokens.idToken ?? '');
+    await SecureStore.setItemAsync('accessToken', tokens.accessToken ?? '');
     const cred = GoogleAuthProvider.credential(tokens.idToken, tokens.accessToken);
     const res = await signInWithCredential(auth, cred);
     setFireUser(res.user);
@@ -71,7 +76,7 @@ export default function User() {
   const signInApple = async () => {
     const appleCred = await Apple.signInAsync({ requestedScopes: [Apple.AppleAuthenticationScope.EMAIL, Apple.AppleAuthenticationScope.FULL_NAME] });
     let idToken = appleCred.identityToken ? appleCred.identityToken : '';
-    let accessToken = appleCred.authorizationCode ? appleCred.authorizationCode : '';
+    let accessToken = appleCred.authorizationCode ?? '';
     await SecureStore.setItemAsync('authProvider', 'Apple');
     await SecureStore.setItemAsync('idToken', idToken);
     await SecureStore.setItemAsync('accessToken', accessToken);
@@ -100,8 +105,8 @@ export default function User() {
 
   return <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
     {userInfo && fireUser && <>
-      <Text> Hello {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>
-      <Button title="SIGN OUT" onPress={signOut} />
+      <Text> {t('hello')} {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>
+      <Button title={t('signOut')} onPress={signOut} />
     </>}
     {fireUser && !userInfo && <ActivityIndicator />}
     {/*error && <Text> {error} </Text>*/}

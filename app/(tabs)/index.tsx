@@ -1,10 +1,11 @@
 import { Button, Text, View, Image } from "react-native";
 import { Camera, PhotoFile, useCameraDevice, useCameraPermission } from "react-native-vision-camera";
 import { PermissionsPage } from "@/components/PermissionsPage";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { db } from "@/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 import { sha256 } from "js-sha256";
+import { i18nContext } from "@/i18n";
 
 export default function Index() {
   const [photo, setPhoto] = useState<PhotoFile>();
@@ -12,6 +13,9 @@ export default function Index() {
   const { hasPermission } = useCameraPermission();
   const device = useCameraDevice("back");
   const cameraRef = useRef<Camera>(null);
+
+  const i18n = useContext(i18nContext);
+  const t = i18n.t.bind(i18n);
 
   if (!hasPermission) return <PermissionsPage />;
 
@@ -31,14 +35,14 @@ export default function Index() {
       />
       <Button
         onPress={async () => setPhoto(await cameraRef.current?.takePhoto())}
-        title="Take Photo"
+        title={t('photo')}
       />
       {photo !== undefined && <>
         <Image
           src={`file://${(photo as PhotoFile).path}`}
           style={{ width: "90%", height: "40%" }}
         />
-        <Button title="Upload" onPress={uploadPhoto} />
+        <Button title={t('upload')} onPress={uploadPhoto} />
       </>}
     </View>
   );

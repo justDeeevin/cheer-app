@@ -4,9 +4,13 @@ import { Tabs } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
+import { i18nContext } from '@/i18n';
 
 export default function TabLayout() {
   const { auth } = useContext(firebaseContext);
+
+  const i18n = useContext(i18nContext);
+  const t = i18n.t.bind(i18n);
 
   useEffect(() => {
     const effect = async () => {
@@ -39,14 +43,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('home'),
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
         }}
       />
       <Tabs.Screen
         name="user"
         options={{
-          title: 'User',
+          title: t('user'),
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
         }}
       />

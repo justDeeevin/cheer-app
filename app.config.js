@@ -37,6 +37,7 @@ export default {
     "expo-router",
     "expo-apple-authentication",
     "expo-secure-store",
+    "expo-localization",
     "react-native-vision-camera",
     "@react-native-google-signin/google-signin",
   ],
