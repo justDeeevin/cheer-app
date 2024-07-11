@@ -2,9 +2,6 @@ import { Button, Text, View, Image } from "react-native";
 import { Camera, PhotoFile, useCameraDevice, useCameraPermission } from "react-native-vision-camera";
 import { PermissionsPage } from "@/components/PermissionsPage";
 import { useContext, useRef, useState } from "react";
-import { db } from "@/firebaseConfig";
-import { setDoc, doc } from "firebase/firestore";
-import { sha256 } from "js-sha256";
 import { i18nContext } from "@/i18n";
 
 export default function Index() {
