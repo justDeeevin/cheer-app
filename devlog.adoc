@@ -73,6 +73,10 @@ This was a simple and smooth addition. Using Expo's `SecureStorage` config plugi
 
 Something I didn't anticipate was that the Firebase app state isn't persisted across pages with my current import method. I could just have a first-load side-effect that signs in with the cached credentials, but that feels inefficient and unnecessary. Instead, I decided to use React's `useContext` hook to create app-wide state. The app-wide layout initializes the context and passes it to the tabs screen, and the tab layout tries to log in with any cached credentials, then passes the context to the given tab. Thus, the Firebase app stays the same between pages, and the log-in only has to happen once.
 
+=== Locking the form behind login - 2024-07-12
+
+This is a pretty basic requirement. However, it took me a while. I spend the first half of the day under the misconception that putting the context in the layout would actually just give each route its own copy of the context. I followed a confusing tutorial and eventually realized that it was just a fancier way of doing what I already was doing, and that what I was doing worked fine. Afterwards, I struggled with my inexperience with React, as I spend far too long being confused because I didn't realize that `setState` only re-renders if the new state is different from the old one. At the end of the day, I made the home page display a warning with a link to the user page when the user is not logged in. Pretty small, but I learned a lot along the way.
+
 == Working with a database
 
 The cloud has to store the following: (may change)
@@ -91,7 +95,7 @@ I started by having a collection of people in the database, indexed by their Fir
 
 Right now, I just use typecasting in the typescript code. However, in the future, it will very likely be in my interest to use Firestore rules to enforce a schema on the data. I have heard of some libraries that introduce generics to the firestore JS API, but I haven't looked too deeply into them yet. I'm not sure if that will be necessary or not.
 
-== Miscellaneous app imprrovements
+== Miscellaneous app improvements
 
 === Localization - 2024-07-11
 
