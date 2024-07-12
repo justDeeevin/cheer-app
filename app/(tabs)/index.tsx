@@ -3,6 +3,7 @@ import { Camera, PhotoFile, useCameraDevice, useCameraPermission } from "react-n
 import { PermissionsPage } from "@/components/PermissionsPage";
 import { useContext, useRef, useState } from "react";
 import { i18nContext } from "@/i18n";
+import { styles } from "@/constants/style";
 
 export default function Index() {
   const [photo, setPhoto] = useState<PhotoFile>();
@@ -22,7 +23,6 @@ export default function Index() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Camera
         ref={cameraRef}
         device={device}
@@ -37,6 +37,7 @@ export default function Index() {
       {photo !== undefined && <>
         <Image
           src={`file://${(photo as PhotoFile).path}`}
+    <View style={styles.centeredView}>
           style={{ width: "90%", height: "40%" }}
         />
         <Button title={t('upload')} onPress={uploadPhoto} />

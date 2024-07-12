@@ -15,6 +15,7 @@ import * as SecureStore from 'expo-secure-store';
 import { User as UserInfo } from '@/types/firestore';
 
 import { i18nContext } from '@/i18n';
+import { styles } from '@/constants/style';
 
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
@@ -103,7 +104,7 @@ export default function User() {
     await SecureStore.deleteItemAsync('accessToken');
   }
 
-  return <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  return <View style={styles.centeredView}>
     {userInfo && fireUser && <>
       <Text> {t('hello')} {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>
       <Button title={t('signOut')} onPress={signOut} />
