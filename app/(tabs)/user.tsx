@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { View, Text, ActivityIndicator, Button } from 'react-native';
-import { firebaseContext } from '@/authContext';
+import { firebaseContext, loggedInContext } from '@/authContext';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential, User as FireUser } from 'firebase/auth';
 import {
   GoogleSignin,
@@ -19,6 +19,7 @@ import { styles } from '@/constants/style';
 
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
+  const { setLoggedIn } = useContext(loggedInContext);
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [fireUser, setFireUser] = useState<FireUser | undefined>(auth.currentUser as FireUser);
   const [appleUser, setAppleUser] = useState<Apple.AppleAuthenticationCredential>();
@@ -58,6 +59,8 @@ export default function User() {
 
         setUserInfo(userInfo);
       }
+
+      if (auth.currentUser) setLoggedIn(true);
     }
     effect()
   }, [fireUser])
@@ -102,6 +105,8 @@ export default function User() {
     await SecureStore.deleteItemAsync('authProvider');
     await SecureStore.deleteItemAsync('idToken');
     await SecureStore.deleteItemAsync('accessToken');
+
+    setLoggedIn(false);
   }
 
   return <View style={styles.centeredView}>

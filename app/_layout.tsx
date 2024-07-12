@@ -1,17 +1,22 @@
 import { Stack } from 'expo-router/stack';
-import { firebaseContext } from '@/authContext';
-import { auth, db } from '@/firebaseConfig';
+import { firebaseContext, loggedInContext, FirebaseContext } from '@/authContext';
+import { auth as authImport, db } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
 
 export default function Layout() {
   const i18n = useI18n();
 
+  const [firebaseState, _setFirebaseState] = useState<FirebaseContext>({ auth: authImport, db });
+  const auth = firebaseState.auth;
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
   useEffect(() => {
     const effect = async () => {
-      if (!auth.currentUser) {
+      if (!loggedIn) {
         const credentialType = await SecureStore.getItemAsync('authProvider');
         if (credentialType === 'Google') {
           const idToken = await SecureStore.getItemAsync('idToken');
@@ -29,6 +34,8 @@ export default function Layout() {
             });
           await signInWithCredential(auth, firebaseCred);
         }
+
+        if (auth.currentUser) setLoggedIn(true);
       }
     }
 
@@ -37,11 +44,13 @@ export default function Layout() {
 
   return (
     <i18nContext.Provider value={i18n}>
-      <firebaseContext.Provider value={{ auth, db }}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack >
-      </firebaseContext.Provider>
-    </i18nContext.Provider>
+      <loggedInContext.Provider value={{ loggedIn, setLoggedIn }}>
+        <firebaseContext.Provider value={firebaseState}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack >
+        </firebaseContext.Provider>
+      </loggedInContext.Provider>
+    </i18nContext.Provider >
   );
 }

@@ -10,6 +10,8 @@ const translations = {
     signOut: "SIGN OUT",
     user: "User",
     home: "Home",
+    signInWarning: "You need to sign in to submit data.",
+    goToUser: "GO TO USER TAB",
   },
   es: {
     photo: "TOMAR FOTO",
@@ -18,6 +20,8 @@ const translations = {
     signOut: "DESCONECTAR",
     user: "Usuario",
     home: "Hogar",
+    signInWarning: "Debes iniciar sesión para enviar datos.",
+    goToUser: "IR A LA PESTAÑA DE USUARIO",
   },
 };
 
