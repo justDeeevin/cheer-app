@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { View, Text, ActivityIndicator, Button } from 'react-native';
-import { firebaseContext, loggedInContext } from '@/authContext';
+import { firebaseContext } from '@/authContext';
 import { GoogleAuthProvider, OAuthProvider, signInWithCredential, User as FireUser } from 'firebase/auth';
 import {
   GoogleSignin,
@@ -10,8 +10,6 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import * as Apple from 'expo-apple-authentication'
 
-import * as SecureStore from 'expo-secure-store';
-
 import { User as UserInfo } from '@/types/firestore';
 
 import { i18nContext } from '@/i18n';
@@ -19,7 +17,6 @@ import { styles } from '@/constants/style';
 
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
-  const { setLoggedIn } = useContext(loggedInContext);
   const [userInfo, setUserInfo] = useState<UserInfo>();
   const [fireUser, setFireUser] = useState<FireUser | undefined>(auth.currentUser as FireUser);
   const [appleUser, setAppleUser] = useState<Apple.AppleAuthenticationCredential>();
@@ -59,8 +56,6 @@ export default function User() {
 
         setUserInfo(userInfo);
       }
-
-      if (auth.currentUser) setLoggedIn(true);
     }
     effect()
   }, [fireUser])
@@ -69,9 +64,6 @@ export default function User() {
     await GoogleSignin.hasPlayServices();
     await GoogleSignin.signIn();
     const tokens = await GoogleSignin.getTokens();
-    await SecureStore.setItemAsync('authProvider', 'Google');
-    await SecureStore.setItemAsync('idToken', tokens.idToken ?? '');
-    await SecureStore.setItemAsync('accessToken', tokens.accessToken ?? '');
     const cred = GoogleAuthProvider.credential(tokens.idToken, tokens.accessToken);
     const res = await signInWithCredential(auth, cred);
     setFireUser(res.user);
@@ -81,9 +73,6 @@ export default function User() {
     const appleCred = await Apple.signInAsync({ requestedScopes: [Apple.AppleAuthenticationScope.EMAIL, Apple.AppleAuthenticationScope.FULL_NAME] });
     let idToken = appleCred.identityToken ? appleCred.identityToken : '';
     let accessToken = appleCred.authorizationCode ?? '';
-    await SecureStore.setItemAsync('authProvider', 'Apple');
-    await SecureStore.setItemAsync('idToken', idToken);
-    await SecureStore.setItemAsync('accessToken', accessToken);
     setAppleUser(appleCred);
     const firebaseCred = new OAuthProvider('apple.com')
       .credential({
@@ -95,18 +84,13 @@ export default function User() {
   }
 
   const signOut = async () => {
+    console.warn(auth.currentUser?.providerId);
     await auth.signOut();
     setFireUser(undefined);
     setUserInfo(undefined);
-    if ((await SecureStore.getItemAsync('authProvider')) === 'Google') {
+    if (GoogleSignin.getCurrentUser()) {
       await GoogleSignin.signOut();
     }
-
-    await SecureStore.deleteItemAsync('authProvider');
-    await SecureStore.deleteItemAsync('idToken');
-    await SecureStore.deleteItemAsync('accessToken');
-
-    setLoggedIn(false);
   }
 
   return <View style={styles.centeredView}>

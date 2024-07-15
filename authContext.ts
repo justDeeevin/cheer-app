@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import { createContext } from "react";
 import { auth, db } from "@/firebaseConfig";
 import { Auth } from "firebase/auth";
 import { Firestore } from "firebase/firestore";
@@ -13,7 +13,4 @@ export const firebaseContext = createContext<FirebaseContext>({
   db,
 });
 
-export const loggedInContext = createContext<{
-  loggedIn: boolean;
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-}>({ loggedIn: false, setLoggedIn: () => {} });
+export const loggedInContext = createContext<boolean>(false);

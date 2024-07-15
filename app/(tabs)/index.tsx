@@ -10,7 +10,7 @@ import { styles } from "@/constants/style";
 export default function Index() {
   const [photo, setPhoto] = useState<PhotoFile>();
 
-  const { loggedIn } = useContext(loggedInContext);
+  const loggedIn = useContext(loggedInContext);
 
   const { hasPermission } = useCameraPermission();
   const device = useCameraDevice("back");

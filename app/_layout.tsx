@@ -2,9 +2,7 @@ import { Stack } from 'expo-router/stack';
 import { firebaseContext, loggedInContext, FirebaseContext } from '@/authContext';
 import { auth as authImport, db } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n'
-import { useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { GoogleAuthProvider, OAuthProvider, signInWithCredential } from 'firebase/auth';
+import { useState } from 'react';
 
 export default function Layout() {
   const i18n = useI18n();
@@ -14,37 +12,18 @@ export default function Layout() {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const effect = async () => {
-      if (!loggedIn) {
-        const credentialType = await SecureStore.getItemAsync('authProvider');
-        if (credentialType === 'Google') {
-          const idToken = await SecureStore.getItemAsync('idToken');
-          const accessToken = await SecureStore.getItemAsync('accessToken');
-          const cred = GoogleAuthProvider.credential(idToken, accessToken);
-          await signInWithCredential(auth, cred);
-        }
-        else if (credentialType === 'Apple') {
-          const idToken = await SecureStore.getItemAsync('idToken') as string;
-          const accessToken = await SecureStore.getItemAsync('accessToken') as string;
-          const firebaseCred = new OAuthProvider('apple.com')
-            .credential({
-              idToken,
-              accessToken
-            });
-          await signInWithCredential(auth, firebaseCred);
-        }
-
-        if (auth.currentUser) setLoggedIn(true);
-      }
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      setLoggedIn(true);
     }
-
-    effect()
-  }, [])
+    else {
+      setLoggedIn(false);
+    }
+  });
 
   return (
     <i18nContext.Provider value={i18n}>
-      <loggedInContext.Provider value={{ loggedIn, setLoggedIn }}>
+      <loggedInContext.Provider value={loggedIn}>
         <firebaseContext.Provider value={firebaseState}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
