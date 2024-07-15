@@ -77,6 +77,10 @@ Something I didn't anticipate was that the Firebase app state isn't persisted ac
 
 This is a pretty basic requirement. However, it took me a while. I spend the first half of the day under the misconception that putting the context in the layout would actually just give each route its own copy of the context. I followed a confusing tutorial and eventually realized that it was just a fancier way of doing what I already was doing, and that what I was doing worked fine. Afterwards, I struggled with my inexperience with React, as I spend far too long being confused because I didn't realize that `setState` only re-renders if the new state is different from the old one. At the end of the day, I made the home page display a warning with a link to the user page when the user is not logged in. Pretty small, but I learned a lot along the way.
 
+=== Correctly persisting authentication - 2024-07-15
+
+I was having a problem where the persisted authentication would become invalid after only a few hours. I realized I was improperly using the token model. I was storing the access token, which is only meant to be used at initial authentication. The proper way to do it is to store an ID token that is provided by the server. I tried to figure out how to do that manually, but I couldn't. Eventually, I discovered a function in the Firebase API that mentioned persistence and, after some digging, found that there is a specific set of functions to run to get persistence working in a React Native app automatically. Now, it works like a charm.
+
 == Working with a database
 
 The cloud has to store the following: (may change)
