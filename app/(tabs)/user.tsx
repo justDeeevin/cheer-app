@@ -84,7 +84,6 @@ export default function User() {
   }
 
   const signOut = async () => {
-    console.warn(auth.currentUser?.providerId);
     await auth.signOut();
     setFireUser(undefined);
     setUserInfo(undefined);
