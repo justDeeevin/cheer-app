@@ -4,24 +4,26 @@ import { createContext } from "react";
 
 const translations = {
   en: {
-    photo: "TAKE PHOTO",
-    upload: "UPLOAD",
+    takePhoto: "TAKE PHOTO",
+    submit: "SUBMIT",
     hello: "Hello",
     signOut: "SIGN OUT",
     user: "User",
     home: "Home",
     signInWarning: "You need to sign in to submit data.",
     goToUser: "GO TO USER TAB",
+    selectGarden: "Select a garden",
   },
   es: {
-    photo: "TOMAR FOTO",
-    upload: "SUBIR",
+    takePhoto: "TOMAR FOTO",
+    submit: "ENTREGAR",
     hello: "Hola",
     signOut: "DESCONECTAR",
     user: "Usuario",
     home: "Hogar",
     signInWarning: "Debes iniciar sesión para enviar datos.",
     goToUser: "IR A LA PESTAÑA DE USUARIO",
+    selectGarden: "Selecciona un jardín",
   },
 };
 
