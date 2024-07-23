@@ -113,6 +113,10 @@ The core of the app is a form that allows users to log harvested produce. We nee
 
 My dad and I decided to put this form together in small steps, checking in with each other along the way. We decided to use references to other documents to achieve a similar effect to a relational database. The first had a hard-coded list of options in a dropdown, and a submit button. The selection from the dropdown wasn't uploaded, just the user and the date. Next, my dad put all 6 gardens in a collection in the database, and I wrote code that would use that list for the options of gardens in the form. Then, based on the selection, a new field on the harvest was added that held a reference to the garden that was selected. This all went very smoothly.
 
+=== Full Form - 2024-07-23
+
+After a meeting, we got a pretty solidified idea of how to structure the database. For all front-facing data (names of crops, names of units, etc.), we decided to have a collection with documents IDed by locale for dynamic fetching by language. This works great. We're now submitting every field we so far want. Next is attendance and some UI cleanup.
+
 == Miscellaneous App Improvements
 
 === Localization - 2024-07-11
