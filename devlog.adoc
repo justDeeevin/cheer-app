@@ -99,6 +99,20 @@ I started by having a collection of people in the database, indexed by their Fir
 
 Right now, I just use typecasting in the typescript code. However, in the future, it will very likely be in my interest to use Firestore rules to enforce a schema on the data. I have heard of some libraries that introduce generics to the firestore JS API, but I haven't looked too deeply into them yet. I'm not sure if that will be necessary or not.
 
+== The Harvest Form
+
+The core of the app is a form that allows users to log harvested produce. We need to store the following information:
+
+* Date of harvest
+* Person who harvested
+* Garden where the harvest was made
+* How much was harvested
+* Unit of measure
+
+=== Database Relations and Form UI - 2024-07-22
+
+My dad and I decided to put this form together in small steps, checking in with each other along the way. We decided to use references to other documents to achieve a similar effect to a relational database. The first had a hard-coded list of options in a dropdown, and a submit button. The selection from the dropdown wasn't uploaded, just the user and the date. Next, my dad put all 6 gardens in a collection in the database, and I wrote code that would use that list for the options of gardens in the form. Then, based on the selection, a new field on the harvest was added that held a reference to the garden that was selected. This all went very smoothly.
+
 == Miscellaneous App Improvements
 
 === Localization - 2024-07-11
