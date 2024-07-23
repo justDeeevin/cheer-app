@@ -65,23 +65,23 @@ I found https://www.youtube.com/watch?v=HY3O_wrvDsI[this video] that was exactly
 
 I started by removing the google sign-in plugin from the app, and following Firebase's web docs by using the `signInWithPopup` function. That didn't work, and I soon found out that was because that is a web-only function that creates a new browser pop-up window. Instead, the correct way to do it in react native is to use the google sign-in button, then use the `GoogleAuthProvider.credential` function to create an `AuthCredential` based on the tokens provided by the `GoogleSignin` object from the react native google sign-in library. We are now successfully authenticating users and registering new ones using Google OAuth. B)
 
-=== Caching credentials - 2024-07-03 
+=== Caching Credentials - 2024-07-03 
 
 This was a simple and smooth addition. Using Expo's `SecureStorage` config plugin, we can store plaintext key-value pairs securely on the device footnote:[I'm not sure of the specifics of this library (what makes it "secure", how it works under the hood, etc.), but right now I don't need to. It may come up later, however.]. I store the `idToken`, `accessToken`, and authentication provider, and generate a Firestore credential object with that information. Right now, I don't have any proper handling of expired credentials, and the login button shows while the cached credentials are being loaded. I'm going to move onto other crucial features and take note of these issues here for later cleanup.
 
-=== App-wide auth session context - 2024-07-10
+=== App-Wide Auth Session Context - 2024-07-10
 
 Something I didn't anticipate was that the Firebase app state isn't persisted across pages with my current import method. I could just have a first-load side-effect that signs in with the cached credentials, but that feels inefficient and unnecessary. Instead, I decided to use React's `useContext` hook to create app-wide state. The app-wide layout initializes the context and passes it to the tabs screen, and the tab layout tries to log in with any cached credentials, then passes the context to the given tab. Thus, the Firebase app stays the same between pages, and the log-in only has to happen once.
 
-=== Locking the form behind login - 2024-07-12
+=== Locking the Form Behind Login - 2024-07-12
 
 This is a pretty basic requirement. However, it took me a while. I spend the first half of the day under the misconception that putting the context in the layout would actually just give each route its own copy of the context. I followed a confusing tutorial and eventually realized that it was just a fancier way of doing what I already was doing, and that what I was doing worked fine. Afterwards, I struggled with my inexperience with React, as I spend far too long being confused because I didn't realize that `setState` only re-renders if the new state is different from the old one. At the end of the day, I made the home page display a warning with a link to the user page when the user is not logged in. Pretty small, but I learned a lot along the way.
 
-=== Correctly persisting authentication - 2024-07-15
+=== Correctly Persisting Authentication - 2024-07-15
 
 I was having a problem where the persisted authentication would become invalid after only a few hours. I realized I was improperly using the token model. I was storing the access token, which is only meant to be used at initial authentication. The proper way to do it is to store an ID token that is provided by the server. I tried to figure out how to do that manually, but I couldn't. Eventually, I discovered a function in the Firebase API that mentioned persistence and, after some digging, found that there is a specific set of functions to run to get persistence working in a React Native app automatically. Now, it works like a charm.
 
-== Working with a database
+== Working with a Database
 
 The cloud has to store the following: (may change)
 
@@ -90,7 +90,7 @@ The cloud has to store the following: (may change)
 
 There may be a number of different approaches to these requirements. We're pretty set, however, on using Firestore, for its easy integration with our already-existing Firebase project.
 
-=== Syncing user information - 2024-07-02
+=== Syncing User Information - 2024-07-02
 
 I started by having a collection of people in the database, indexed by their Firebase UID, containing their first and last name. On the user page, when the Firebase user is loaded, I check to see if that UID is in the collection. If it is, I simply get the first and last name and display them. If it isn't, I create the document and get the first and last name from the specific OAUTH provider, uploading them to the database and displaying them in the app. There were some things I learned in the process of adding this feature:
 
@@ -99,7 +99,7 @@ I started by having a collection of people in the database, indexed by their Fir
 
 Right now, I just use typecasting in the typescript code. However, in the future, it will very likely be in my interest to use Firestore rules to enforce a schema on the data. I have heard of some libraries that introduce generics to the firestore JS API, but I haven't looked too deeply into them yet. I'm not sure if that will be necessary or not.
 
-== Miscellaneous app improvements
+== Miscellaneous App Improvements
 
 === Localization - 2024-07-11
 
