@@ -1,4 +1,4 @@
-import { DocumentReference } from "firebase/firestore";
+import { DocumentReference } from 'firebase/firestore';
 
 export interface User {
   firstName: string;
@@ -14,4 +14,15 @@ export interface Harvest {
 export interface Garden {
   houseNumber: string;
   streetName: string;
+  nickname: string;
+}
+
+export interface Crop {
+  ezID: string;
+  name: {
+    [locale: string]: { value: string };
+  };
+  units: {
+    [locale: string]: { value: string };
+  };
 }
