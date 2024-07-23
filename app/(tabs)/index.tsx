@@ -42,7 +42,7 @@ export default function Index() {
     }
 
     effect()
-  })
+  }, [])
 
   const submit = async () => {
     const image = await readAsStringAsync(`file://${photo?.path}`);
