@@ -47,8 +47,8 @@ export default function User() {
           }
 
           userInfo = {
-            "first name": firstName ?? '',
-            "last name": lastName ?? ''
+            firstName: firstName ?? '',
+            lastName: lastName ?? ''
           }
           await setDoc(doc(db, 'people', fireUser.uid), userInfo);
 
@@ -94,7 +94,7 @@ export default function User() {
 
   return <View style={styles.centeredView}>
     {userInfo && fireUser && <>
-      <Text> {t('hello')} {`${userInfo["first name"]} ${userInfo["last name"]} <${fireUser.email}>`} </Text>
+      <Text> {t('hello')} {`${userInfo.firstName} ${userInfo.lastName} <${fireUser.email}>`} </Text>
       <Button title={t('signOut')} onPress={signOut} />
     </>}
     {fireUser && !userInfo && <ActivityIndicator />}
