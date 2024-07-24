@@ -8,13 +8,22 @@ export default function TabLayout() {
   const t = i18n.t.bind(i18n);
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: t('home'),
+          title: t('harvest'),
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={color} />
+            <FontAwesome size={28} name="shopping-basket" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="attendance"
+        options={{
+          title: t('attendance'),
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={28} name="calendar-check-o" color={color} />
           ),
         }}
       />

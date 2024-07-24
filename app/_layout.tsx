@@ -3,7 +3,8 @@ import {
   firebaseContext,
   loggedInContext,
   FirebaseContext,
-} from '@/authContext';
+  attendanceContext,
+} from '@/context';
 import { auth as authImport, db, storage } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n';
 import { useState } from 'react';
@@ -28,15 +29,19 @@ export default function Layout() {
     }
   });
 
+  const attendanceContextState = useState(false);
+
   return (
-    <i18nContext.Provider value={i18n}>
-      <loggedInContext.Provider value={loggedIn}>
-        <firebaseContext.Provider value={firebaseState}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </firebaseContext.Provider>
-      </loggedInContext.Provider>
-    </i18nContext.Provider>
+    <attendanceContext.Provider value={attendanceContextState}>
+      <i18nContext.Provider value={i18n}>
+        <loggedInContext.Provider value={loggedIn}>
+          <firebaseContext.Provider value={firebaseState}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </firebaseContext.Provider>
+        </loggedInContext.Provider>
+      </i18nContext.Provider>
+    </attendanceContext.Provider>
   );
 }

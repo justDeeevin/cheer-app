@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { View, Text, ActivityIndicator, Button } from 'react-native';
-import { firebaseContext } from '@/authContext';
+import { firebaseContext } from '@/context';
 import {
   GoogleAuthProvider,
   OAuthProvider,
@@ -28,7 +28,6 @@ export default function User() {
   );
   const [appleUser, setAppleUser] =
     useState<Apple.AppleAuthenticationCredential>();
-  // const [error, setError] = useState<string>();
 
   const i18n = useContext(i18nContext);
   const t = i18n.t.bind(i18n);
