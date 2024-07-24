@@ -8,6 +8,9 @@ import { attendanceContext, firebaseContext, loggedInContext } from '@/context';
 import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { Garden } from '@/types/firestore';
+import { Calendar } from 'react-native-calendars';
+import { MarkedDates } from 'react-native-calendars/src/types';
+import { DocumentReference } from 'firebase/firestore';
 
 export default function Attendance() {
   const i18n = useContext(i18nContext);
@@ -37,6 +40,26 @@ export default function Attendance() {
 
   const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
 
+  useEffect(() => {
+    const effect = async () => {
+      const attendanceCollection = await getDocs(
+        collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
+      );
+      if (
+        attendanceCollection.docs.find(
+          doc =>
+            Object.assign(new Date(), doc.data().date as Date)
+              .toISOString()
+              .replace(/T.*$/, '') ===
+            new Date().toISOString().replace(/T.*$/, '')
+        )
+      )
+        setAttendanceLogged(true);
+    };
+
+    effect();
+  });
+
   const { db, auth } = useContext(firebaseContext);
   const loggedIn = useContext(loggedInContext);
 
@@ -53,10 +76,48 @@ export default function Attendance() {
     );
   };
 
+  const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+
+  useEffect(() => {
+    const effect = async () => {
+      const attendanceCollection = await getDocs(
+        collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
+      );
+      const attendance: MarkedDates = {};
+      attendanceCollection.forEach(doc => {
+        const attendanceDoc = doc.data();
+        attendance[
+          // Date object pulled from the cloud is just JSON, so it doesn't have any methods.
+          Object.assign(new Date(), attendanceDoc.date as Date)
+            .toISOString()
+            .replace(/T.*$/, '')
+        ] = {
+          marked: true,
+          dotColor: '#7CFC00',
+        };
+      });
+
+      setMarkedDates(attendance);
+    };
+
+    effect();
+  }, []);
+
+  useEffect(() => {
+    setMarkedDates({
+      [new Date().toISOString().replace(/T.*$/, '')]: {
+        marked: true,
+        dotColor: '#7CFC00',
+      },
+      ...markedDates,
+    });
+  }, [attendanceLogged]);
+
   return (
     <View style={styles.centeredView}>
       {loggedIn ? (
         <>
+          <Calendar markedDates={markedDates} />
           {!attendanceLogged && (
             <>
               <DropDownPicker
