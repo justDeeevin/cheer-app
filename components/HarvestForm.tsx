@@ -10,7 +10,7 @@ import {
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
-import { firebaseContext } from '@/context';
+import { firebaseContext, attendanceContext } from '@/context';
 import {
   addDoc,
   collection,
@@ -21,6 +21,7 @@ import {
 } from 'firebase/firestore';
 import { useLocales } from 'expo-localization';
 import { Garden, Harvest } from '@/types/firestore';
+import Toast from 'react-native-toast-message';
 
 export default function HarvestForm() {
   const locales = useLocales();
@@ -103,6 +104,23 @@ export default function HarvestForm() {
     measureInputRef.current?.blur();
   });
 
+  const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
+
+  const logAttendance = async () => {
+    setAttendanceLogged(true);
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    addDoc(
+      collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
+      {
+        date: date,
+        garden: doc(db, 'gardens', garden ?? ''),
+      }
+    );
+
+    Toast.show({ type: 'info', text1: 'Attendance logged' });
+  };
+
   const submit = async () => {
     const harvest: Harvest = {
       date: new Date(),
@@ -116,6 +134,7 @@ export default function HarvestForm() {
       unit: doc(db, 'cropUnits', unit?.id ?? ''),
       measure,
     });
+    if (!attendanceLogged) logAttendance();
   };
 
   return (

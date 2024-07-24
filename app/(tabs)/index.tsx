@@ -5,6 +5,7 @@ import { loggedInContext } from '@/context';
 import { Link } from 'expo-router';
 import { styles } from '@/constants/style';
 import HarvestForm from '@/components/HarvestForm';
+import Toast from 'react-native-toast-message';
 
 export default function Index() {
   const loggedIn = useContext(loggedInContext);
@@ -24,6 +25,7 @@ export default function Index() {
           </Link>
         </>
       )}
+      <Toast />
     </View>
   );
 }

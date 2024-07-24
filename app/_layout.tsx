@@ -7,7 +7,8 @@ import {
 } from '@/context';
 import { auth as authImport, db, storage } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getDocs, collection } from 'firebase/firestore';
 
 export default function Layout() {
   const i18n = useI18n();
@@ -29,10 +30,29 @@ export default function Layout() {
     }
   });
 
-  const attendanceContextState = useState(false);
+  const [attendanceLogged, setAttendanceLogged] = useState(false);
+  useEffect(() => {
+    const effect = async () => {
+      const attendanceCollection = await getDocs(
+        collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
+      );
+      if (
+        attendanceCollection.docs.find(
+          doc =>
+            Object.assign(new Date(), doc.data().date as Date)
+              .toISOString()
+              .replace(/T.*$/, '') ===
+            new Date().toISOString().replace(/T.*$/, '')
+        )
+      )
+        setAttendanceLogged(true);
+    };
+
+    effect();
+  });
 
   return (
-    <attendanceContext.Provider value={attendanceContextState}>
+    <attendanceContext.Provider value={[attendanceLogged, setAttendanceLogged]}>
       <i18nContext.Provider value={i18n}>
         <loggedInContext.Provider value={loggedIn}>
           <firebaseContext.Provider value={firebaseState}>
