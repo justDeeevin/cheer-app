@@ -123,6 +123,8 @@ export default function HarvestForm() {
   };
 
   const submit = async () => {
+    setTotalToday(totalToday + parseFloat(measure));
+
     const harvest: Harvest = {
       date: Timestamp.now(),
       person: doc(db, 'people', auth.currentUser?.uid ?? ''),
@@ -138,6 +140,35 @@ export default function HarvestForm() {
     });
     if (!attendanceLogged) logAttendance();
   };
+
+  const [totalToday, setTotalToday] = useState(0);
+
+  useEffect(() => {
+    const effect = async () => {
+      if (!crop) return;
+      const harvests = await getDocs(collection(db, 'harvests'));
+      harvests.forEach(async harvest => {
+        const harvestDoc = harvest.data() as Harvest;
+        if (
+          harvestDoc.date.toDate().toISOString().replace(/T.*$/, '') ===
+            new Date().toISOString().replace(/T.*$/, '') &&
+          harvestDoc.garden.id === garden &&
+          harvestDoc.crop.id === crop &&
+          harvestDoc.person.id === auth.currentUser?.uid
+        ) {
+          const measures = await getDocs(
+            collection(db, 'harvests', harvest.id, 'measures')
+          );
+          measures.forEach(measureDoc => {
+            const measure = measureDoc.data()?.measure;
+            setTotalToday(totalToday + measure);
+          });
+        }
+      });
+    };
+
+    effect();
+  }, [crop]);
 
   return (
     <View style={styles.centeredView}>
@@ -169,30 +200,38 @@ export default function HarvestForm() {
       )}
       {crop && !unit && <ActivityIndicator />}
       {unit && (
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <TextInput
-            ref={measureInputRef}
-            keyboardType="numeric"
-            value={measure?.toString()}
-            onChangeText={text => {
-              if (text === '.') setMeasure(text);
-              else
-                setMeasure(
-                  text
-                    .replace(/,|-| /g, '')
-                    .replace(/(\.?)\.*([0-9]*)(\.?)\.*([0-9]*)\.*/g, '$1$2$3$4')
-                );
+        <>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-            style={styles.input}
-          />
-          <Text>{unit?.name}</Text>
-        </View>
+          >
+            <TextInput
+              ref={measureInputRef}
+              keyboardType="numeric"
+              value={measure?.toString()}
+              onChangeText={text => {
+                if (text === '.') setMeasure(text);
+                else
+                  setMeasure(
+                    text
+                      .replace(/,|-| /g, '')
+                      .replace(
+                        /(\.?)\.*([0-9]*)(\.?)\.*([0-9]*)\.*/g,
+                        '$1$2$3$4'
+                      )
+                  );
+              }}
+              style={styles.input}
+            />
+            <Text>{unit?.name}</Text>
+          </View>
+          <Text>
+            {t('totalToday')}: {totalToday}
+          </Text>
+        </>
       )}
       {measure && measure !== '.' && (
         <Button title={t('submit')} onPress={submit} />

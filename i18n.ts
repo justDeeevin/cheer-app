@@ -16,6 +16,7 @@ const translations = {
     selectCrop: 'Select a crop',
     attendance: 'Attendance',
     logAttendance: 'Log Attendance',
+    totalToday: 'Total today',
   },
   es: {
     takePhoto: 'TOMAR FOTO',
@@ -30,6 +31,7 @@ const translations = {
     selectCrop: 'Seleccione un cultivo',
     attendance: 'Asistencia',
     logAttendance: 'Registrar asistencia',
+    totalToday: 'Total hoy',
   },
 };
 
