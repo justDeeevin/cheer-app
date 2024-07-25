@@ -214,7 +214,11 @@ export default function HarvestForm() {
               value={measure?.toString()}
               onChangeText={text => {
                 if (text === '.') setMeasure(text);
-                else
+                else if (
+                  !(
+                    text.startsWith('.') && (text.match(/\./g) ?? []).length > 1
+                  )
+                )
                   setMeasure(
                     text
                       .replace(/,|-| /g, '')
