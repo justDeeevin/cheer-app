@@ -98,7 +98,7 @@ export default function HarvestForm() {
     effect();
   }, [crop, locale]);
 
-  const [measure, setMeasure] = useState<number | null>(null);
+  const [measure, setMeasure] = useState<string>('');
 
   const measureInputRef = useRef<TextInput>(null);
   Keyboard.addListener('keyboardDidHide', () => {
@@ -133,7 +133,7 @@ export default function HarvestForm() {
 
     await addDoc(collection(db, 'harvests', harvestDoc.id, 'measures'), {
       unit: doc(db, 'cropUnits', unit?.id ?? ''),
-      measure,
+      measure: parseFloat(measure),
     });
     if (!attendanceLogged) logAttendance();
   };
@@ -179,13 +179,23 @@ export default function HarvestForm() {
             ref={measureInputRef}
             keyboardType="numeric"
             value={measure?.toString()}
-            onChangeText={text => setMeasure(text ? parseInt(text) : null)}
+            onChangeText={text => {
+              if (text === '.') setMeasure(text);
+              else
+                setMeasure(
+                  text
+                    .replace(/,|-| /g, '')
+                    .replace(/(\.?)\.*([0-9]*)(\.?)\.*([0-9]*)\.*/g, '$1$2$3$4')
+                );
+            }}
             style={styles.input}
           />
           <Text>{unit?.name}</Text>
         </View>
       )}
-      {measure && <Button title={t('submit')} onPress={submit} />}
+      {measure && measure !== '.' && (
+        <Button title={t('submit')} onPress={submit} />
+      )}
     </View>
   );
 }
