@@ -16,6 +16,7 @@ import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { Garden } from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
+import { getDateString } from '@/utility/functions';
 
 export default function Attendance() {
   const i18n = useContext(i18nContext);
@@ -70,13 +71,8 @@ export default function Attendance() {
       );
       const attendance: MarkedDates = {};
       attendanceCollection.forEach(doc => {
-        const attendanceDoc = doc.data();
-        attendance[
-          (attendanceDoc.date as Timestamp)
-            .toDate()
-            .toISOString()
-            .replace(/T.*$/, '')
-        ] = {
+        const attendanceDoc = doc.data() as AttendanceObject;
+        attendance[attendanceDoc.date] = {
           selected: true,
           selectedColor: '#7CFC00',
         };
@@ -91,7 +87,7 @@ export default function Attendance() {
   useEffect(() => {
     if (attendanceLogged)
       setMarkedDates({
-        [new Date().toISOString().replace(/T.*$/, '')]: {
+        [getDateString()]: {
           selected: true,
           selectedColor: '#7CFC00',
         },

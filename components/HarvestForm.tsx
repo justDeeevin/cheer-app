@@ -23,6 +23,7 @@ import {
 import { useLocales } from 'expo-localization';
 import { Garden, Harvest } from '@/types/firestore';
 import Toast from 'react-native-toast-message';
+import { getDateString } from '@/utility/functions';
 
 export default function HarvestForm() {
   const locales = useLocales();
@@ -126,7 +127,7 @@ export default function HarvestForm() {
     setTotalToday(totalToday + parseFloat(measure));
 
     const harvest: Harvest = {
-      date: Timestamp.now(),
+      date: getDateString(),
       person: doc(db, 'people', auth.currentUser?.uid ?? ''),
       garden: doc(db, 'gardens', garden ?? ''),
       crop: doc(db, 'crops', crop ?? ''),

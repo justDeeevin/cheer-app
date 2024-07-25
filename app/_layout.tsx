@@ -8,7 +8,9 @@ import {
 import { auth as authImport, db, storage } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n';
 import { useState, useEffect } from 'react';
-import { getDocs, collection, Timestamp } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
+import { getDateString } from '@/utility/functions';
+import { Attendance } from '@/types/firestore';
 
 export default function Layout() {
   const i18n = useI18n();
@@ -39,12 +41,9 @@ export default function Layout() {
       );
       if (
         attendanceCollection.docs.find(doc => {
-          const loggedDate = (doc.data().date as Timestamp)
-            .toDate()
-            .toISOString()
-            .replace(/T.*$/, '');
-          const thisDate = new Date().toISOString().replace(/T.*$/, '');
-          return loggedDate === thisDate;
+          const data = doc.data() as Attendance;
+          const loggedDate = data.date;
+          return loggedDate === getDateString();
         })
       )
         setAttendanceLogged(true);
