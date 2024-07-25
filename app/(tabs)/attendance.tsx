@@ -89,13 +89,14 @@ export default function Attendance() {
   }, []);
 
   useEffect(() => {
-    setMarkedDates({
-      [new Date().toISOString().replace(/T.*$/, '')]: {
-        selected: true,
-        selectedColor: '#7CFC00',
-      },
-      ...markedDates,
-    });
+    if (attendanceLogged)
+      setMarkedDates({
+        [new Date().toISOString().replace(/T.*$/, '')]: {
+          selected: true,
+          selectedColor: '#7CFC00',
+        },
+        ...markedDates,
+      });
   }, [attendanceLogged]);
 
   return (
