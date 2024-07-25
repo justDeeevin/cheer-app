@@ -9,6 +9,7 @@ export interface Harvest {
   date: Timestamp;
   person: DocumentReference;
   garden: DocumentReference;
+  crop: DocumentReference;
 }
 
 export interface Garden {

@@ -127,6 +127,7 @@ export default function HarvestForm() {
       date: Timestamp.now(),
       person: doc(db, 'people', auth.currentUser?.uid ?? ''),
       garden: doc(db, 'gardens', garden ?? ''),
+      crop: doc(db, 'crops', crop ?? ''),
     };
 
     const harvestDoc = await addDoc(collection(db, 'harvests'), harvest);
