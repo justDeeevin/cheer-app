@@ -58,7 +58,7 @@ export default function User() {
             firstName: firstName ?? '',
             lastName: lastName ?? '',
           };
-          await setDoc(doc(db, 'people', fireUser.uid), userInfo);
+          setDoc(doc(db, 'people', fireUser.uid), userInfo);
         }
 
         setUserInfo(userInfo);
@@ -97,12 +97,12 @@ export default function User() {
     setFireUser(res.user);
   };
 
-  const signOut = async () => {
-    await auth.signOut();
+  const signOut = () => {
+    auth.signOut();
     setFireUser(undefined);
     setUserInfo(undefined);
     if (GoogleSignin.getCurrentUser()) {
-      await GoogleSignin.signOut();
+      GoogleSignin.signOut();
     }
   };
 

@@ -21,8 +21,10 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { useLocales } from 'expo-localization';
-import { Garden, Harvest } from '@/types/firestore';
+import { Garden, Harvest as Harvest, RealtimeHarvest } from '@/types/firestore';
 import Toast from 'react-native-toast-message';
+import { ref, set } from 'firebase/database';
+import { useList } from 'react-firebase-hooks/database';
 import { getDateString } from '@/utility/functions';
 
 export default function HarvestForm() {
@@ -32,7 +34,7 @@ export default function HarvestForm() {
   const i18n = useContext(i18nContext);
   const t = i18n.t.bind(i18n);
 
-  const { db, auth } = useContext(firebaseContext);
+  const { db, auth, realtime } = useContext(firebaseContext);
 
   const [gardens, setGardens] = useState<ItemType<string>[]>([]);
   const [gardenListOpen, setGardenListOpen] = useState(false);
@@ -123,8 +125,25 @@ export default function HarvestForm() {
     Toast.show({ type: 'info', text1: 'Attendance logged' });
   };
 
+  const [harvestsData, harvestsLoading, _] = useList(
+    ref(realtime, `harvests/${getDateString()}/${garden}/${crop}`)
+  );
+
   const submit = async () => {
-    setTotalToday(totalToday + parseFloat(measure));
+    const realtimeHarvest: RealtimeHarvest = {
+      person: auth.currentUser?.uid ?? '',
+      measures: [
+        {
+          unit: `cropUnits/${unit?.id ?? ''}`,
+          measure: parseFloat(measure),
+        },
+      ],
+    };
+
+    set(ref(realtime, `harvests/${getDateString()}/${garden}/${crop}`), [
+      realtimeHarvest,
+      ...(harvestsData?.map(harvest => harvest.val() as Harvest) ?? []),
+    ]);
 
     const harvest: Harvest = {
       date: getDateString(),
@@ -133,43 +152,25 @@ export default function HarvestForm() {
       crop: doc(db, 'crops', crop ?? ''),
     };
 
-    const harvestDoc = await addDoc(collection(db, 'harvests'), harvest);
-
-    await addDoc(collection(db, 'harvests', harvestDoc.id, 'measures'), {
+    const newHarvest = await addDoc(collection(db, 'harvests'), harvest);
+    addDoc(collection(db, 'harvests', newHarvest.id, 'measures'), {
       unit: doc(db, 'cropUnits', unit?.id ?? ''),
       measure: parseFloat(measure),
     });
+
     if (!attendanceLogged) logAttendance();
   };
 
   const [totalToday, setTotalToday] = useState(0);
 
   useEffect(() => {
-    const effect = async () => {
-      if (!crop) return;
-      const harvests = await getDocs(collection(db, 'harvests'));
-      harvests.forEach(async harvest => {
-        const harvestDoc = harvest.data() as Harvest;
-        if (
-          harvestDoc.date.toDate().toISOString().replace(/T.*$/, '') ===
-            new Date().toISOString().replace(/T.*$/, '') &&
-          harvestDoc.garden.id === garden &&
-          harvestDoc.crop.id === crop &&
-          harvestDoc.person.id === auth.currentUser?.uid
-        ) {
-          const measures = await getDocs(
-            collection(db, 'harvests', harvest.id, 'measures')
-          );
-          measures.forEach(measureDoc => {
-            const measure = measureDoc.data()?.measure;
-            setTotalToday(totalToday + measure);
-          });
-        }
-      });
-    };
-
-    effect();
-  }, [crop]);
+    if (!crop || !garden) return;
+    const harvests =
+      harvestsData?.map(harvest => harvest.val() as RealtimeHarvest) ?? [];
+    setTotalToday(
+      harvests.reduce((acc, harvest) => acc + harvest.measures[0].measure, 0)
+    );
+  }, [crop, garden, harvestsData]);
 
   return (
     <View style={styles.centeredView}>
@@ -233,9 +234,13 @@ export default function HarvestForm() {
             />
             <Text>{unit?.name}</Text>
           </View>
-          <Text>
-            {t('totalToday')}: {totalToday}
-          </Text>
+          {harvestsLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <Text>
+              {t('totalToday')}: {totalToday}
+            </Text>
+          )}
         </>
       )}
       {measure && measure !== '.' && (

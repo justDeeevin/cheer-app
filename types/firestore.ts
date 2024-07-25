@@ -1,4 +1,4 @@
-import { DocumentReference, Timestamp } from 'firebase/firestore';
+import { DocumentReference } from 'firebase/firestore';
 
 export interface User {
   firstName: string;
@@ -6,10 +6,20 @@ export interface User {
 }
 
 export interface Harvest {
-  date: Timestamp;
+  date: string;
   person: DocumentReference;
   garden: DocumentReference;
   crop: DocumentReference;
+}
+
+export interface HarvestMeasure {
+  unit: DocumentReference;
+  measure: number;
+}
+
+export interface RealtimeHarvest {
+  person: string;
+  measures: { unit: string; measure: number }[];
 }
 
 export interface Garden {

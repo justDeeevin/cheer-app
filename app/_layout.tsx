@@ -5,7 +5,7 @@ import {
   FirebaseContext,
   attendanceContext,
 } from '@/context';
-import { auth as authImport, db, storage } from '@/firebaseConfig';
+import { auth as authImport, db, storage, realtime } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n';
 import { useState, useEffect } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
@@ -19,6 +19,7 @@ export default function Layout() {
     auth: authImport,
     db,
     storage,
+    realtime,
   });
   const auth = firebaseState.auth;
 
