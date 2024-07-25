@@ -18,6 +18,7 @@ import {
   getDocs,
   getDoc,
   DocumentReference,
+  Timestamp,
 } from 'firebase/firestore';
 import { useLocales } from 'expo-localization';
 import { Garden, Harvest } from '@/types/firestore';
@@ -113,7 +114,7 @@ export default function HarvestForm() {
     addDoc(
       collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
       {
-        date: date,
+        date: Timestamp.fromDate(date),
         garden: doc(db, 'gardens', garden ?? ''),
       }
     );
@@ -123,7 +124,7 @@ export default function HarvestForm() {
 
   const submit = async () => {
     const harvest: Harvest = {
-      date: new Date(),
+      date: Timestamp.now(),
       person: doc(db, 'people', auth.currentUser?.uid ?? ''),
       garden: doc(db, 'gardens', garden ?? ''),
     };

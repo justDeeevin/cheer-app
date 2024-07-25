@@ -5,7 +5,13 @@ import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
 import { attendanceContext, firebaseContext, loggedInContext } from '@/context';
-import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+} from 'firebase/firestore';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { Garden } from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
@@ -49,7 +55,7 @@ export default function Attendance() {
     addDoc(
       collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
       {
-        date: date,
+        date: Timestamp.fromDate(date),
         garden: doc(db, 'gardens', garden ?? ''),
       }
     );
@@ -66,8 +72,8 @@ export default function Attendance() {
       attendanceCollection.forEach(doc => {
         const attendanceDoc = doc.data();
         attendance[
-          // Date object pulled from the cloud is just JSON, so it doesn't have any methods.
-          Object.assign(new Date(), attendanceDoc.date)
+          (attendanceDoc.date as Timestamp)
+            .toDate()
             .toISOString()
             .replace(/T.*$/, '')
         ] = {
