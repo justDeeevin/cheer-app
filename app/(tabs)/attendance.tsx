@@ -106,6 +106,8 @@ export default function Attendance() {
           <Calendar
             markedDates={markedDates}
             theme={{ arrowColor: '#0101FF', todayTextColor: '#0101FF' }}
+            disabledByDefault
+            disableAllTouchEventsForDisabledDays
           />
           {!attendanceLogged && (
             <>
