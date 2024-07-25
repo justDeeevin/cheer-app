@@ -33,6 +33,7 @@ export default function Layout() {
   const [attendanceLogged, setAttendanceLogged] = useState(false);
   useEffect(() => {
     const effect = async () => {
+      if (!auth.currentUser?.uid) return;
       const attendanceCollection = await getDocs(
         collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
       );
@@ -50,7 +51,7 @@ export default function Layout() {
     };
 
     effect();
-  });
+  }, [auth.currentUser?.uid]);
 
   return (
     <attendanceContext.Provider value={[attendanceLogged, setAttendanceLogged]}>
