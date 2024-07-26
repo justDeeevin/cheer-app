@@ -121,6 +121,10 @@ After a meeting, we got a pretty solidified idea of how to structure the databas
 
 I added a piece of text below the measure input box that shows the total amount that crop harvested at that garden on the current day. I also improved the way that I was handling dates: Firebase's JS API uses `Timestamp` objects rather than `Date` objects (I only learned this today), so I had to switch up a few things. I also changed the behavior of how the measure input is stored. Previously, the variable itself was a number. However, this meant that if any invalid string was input, it would parse to `NaN`, and the sudden change in text crashed the app (at least, I think that's what caused the crash). I fixed this by storing the variable as a string and only parsing it when it got sent to the cloud. This meant that I could pass it directly into the `value` property of the `TextInput`, and also that I could allow the invalid string `'.'` temporarily (while hiding the submit button) so that users could type values such as `.4`. I also did some better regex that prevents the user from typing an invalid float.
 
+=== Improved UX Flow - 2024-07-26
+
+I changed the behavior of the app upon launching. I added a welcome screen that prompts the user to either begin harvesting or just log attendance. I also made a number of backend improvements, as well as added the status bar into the layout (so now items are properly centered).
+
 == Attendance
 
 Gardners who attend frequently are rewarded with credits they can use at certain farmers' markets. Thus, it's important to track attendance separately from harvests.
