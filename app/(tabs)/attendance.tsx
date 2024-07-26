@@ -17,6 +17,7 @@ import { Attendance as AttendanceObject, Garden } from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
 import { getDateString } from '@/utility/functions';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Attendance() {
   const i18n = useContext(i18nContext);
@@ -95,7 +96,7 @@ export default function Attendance() {
   }, [attendanceLogged]);
 
   return (
-    <View style={styles.centeredView}>
+    <SafeAreaView style={styles.centeredView}>
       {loggedIn ? (
         <>
           <Calendar
@@ -131,6 +132,6 @@ export default function Attendance() {
           </Link>
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 }

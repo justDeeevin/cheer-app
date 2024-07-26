@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { View, Text, ActivityIndicator, Button } from 'react-native';
+import { Text, ActivityIndicator, Button } from 'react-native';
 import { firebaseContext } from '@/context';
 import {
   GoogleAuthProvider,
@@ -19,6 +19,7 @@ import { User as UserInfo } from '@/types/firestore';
 
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function User() {
   const { auth, db } = useContext(firebaseContext);
@@ -107,7 +108,7 @@ export default function User() {
   };
 
   return (
-    <View style={styles.centeredView}>
+    <SafeAreaView style={styles.centeredView}>
       {userInfo && fireUser && (
         <>
           <Text>
@@ -133,6 +134,6 @@ export default function User() {
         buttonStyle={Apple.AppleAuthenticationButtonStyle.BLACK}
         onPress={signInApple}
       />
-    </View>
+    </SafeAreaView>
   );
 }

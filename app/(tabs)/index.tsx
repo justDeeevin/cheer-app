@@ -1,11 +1,12 @@
-import { Button, Text, View } from 'react-native';
 import { useContext } from 'react';
+import { Button, Text } from 'react-native';
 import { i18nContext } from '@/i18n';
 import { loggedInContext } from '@/context';
 import { Link } from 'expo-router';
 import { styles } from '@/constants/style';
 import HarvestForm from '@/components/HarvestForm';
 import Toast from 'react-native-toast-message';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
   const loggedIn = useContext(loggedInContext);
@@ -14,7 +15,7 @@ export default function Index() {
   const t = i18n.t.bind(i18n);
 
   return (
-    <View style={styles.centeredView}>
+    <SafeAreaView style={styles.centeredView}>
       {loggedIn ? (
         <HarvestForm />
       ) : (
@@ -26,6 +27,6 @@ export default function Index() {
         </>
       )}
       <Toast />
-    </View>
+    </SafeAreaView>
   );
 }
