@@ -21,7 +21,12 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { useLocales } from 'expo-localization';
-import { Garden, Harvest as Harvest, RealtimeHarvest } from '@/types/firestore';
+import {
+  Harvest,
+  HarvestMeasure,
+  RealtimeHarvest,
+  Attendance,
+} from '@/types/firestore';
 import Toast from 'react-native-toast-message';
 import { ref, set } from 'firebase/database';
 import { useList } from 'react-firebase-hooks/database';
@@ -112,14 +117,13 @@ export default function HarvestForm() {
 
   const logAttendance = async () => {
     setAttendanceLogged(true);
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
+    const attendance: Attendance = {
+      date: getDateString(),
+      garden: doc(db, 'gardens', garden),
+    };
     addDoc(
       collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
-      {
-        date: Timestamp.fromDate(date),
-        garden: doc(db, 'gardens', garden ?? ''),
-      }
+      attendance
     );
 
     Toast.show({ type: 'info', text1: 'Attendance logged' });
@@ -153,10 +157,14 @@ export default function HarvestForm() {
     };
 
     const newHarvest = await addDoc(collection(db, 'harvests'), harvest);
-    addDoc(collection(db, 'harvests', newHarvest.id, 'measures'), {
+    const harvestMeasure: HarvestMeasure = {
       unit: doc(db, 'cropUnits', unit?.id ?? ''),
       measure: parseFloat(measure),
-    });
+    };
+    addDoc(
+      collection(db, 'harvests', newHarvest.id, 'measures'),
+      harvestMeasure
+    );
 
     if (!attendanceLogged) logAttendance();
   };

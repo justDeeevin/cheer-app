@@ -28,6 +28,11 @@ export interface Garden {
   nickname: string;
 }
 
+export interface Attendance {
+  date: string;
+  garden: DocumentReference;
+}
+
 export interface Crop {
   ezID: string;
   name: {

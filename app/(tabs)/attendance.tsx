@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
 import { Link } from 'expo-router';
 import { Button } from 'react-native';
 import { useContext, useState, useEffect } from 'react';
@@ -13,7 +13,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
-import { Garden } from '@/types/firestore';
+import { Attendance as AttendanceObject, Garden } from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
 import { getDateString } from '@/utility/functions';
@@ -51,14 +51,13 @@ export default function Attendance() {
 
   const logAttendance = async () => {
     setAttendanceLogged(true);
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
+    const attendance: AttendanceObject = {
+      date: getDateString(),
+      garden: doc(db, 'gardens', garden ?? ''),
+    };
     addDoc(
       collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
-      {
-        date: Timestamp.fromDate(date),
-        garden: doc(db, 'gardens', garden ?? ''),
-      }
+      attendance
     );
   };
 
