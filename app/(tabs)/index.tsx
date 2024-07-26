@@ -1,23 +1,101 @@
-import { useContext } from 'react';
 import { Button, Text } from 'react-native';
+import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { loggedInContext } from '@/context';
 import { Link } from 'expo-router';
 import { styles } from '@/constants/style';
 import HarvestForm from '@/components/HarvestForm';
+import Welcome from '@/components/Welcome';
 import Toast from 'react-native-toast-message';
+import { attendanceContext, firebaseContext } from '@/context';
+import { addDoc, collection, getDocs, doc } from 'firebase/firestore';
+import { Attendance, Garden } from '@/types/firestore';
+import { getDateString } from '@/utility/functions';
+import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
   const loggedIn = useContext(loggedInContext);
 
+  const { db, auth } = useContext(firebaseContext);
+
   const i18n = useContext(i18nContext);
   const t = i18n.t.bind(i18n);
+
+  const [gardens, setGardens] = useState<ItemType<string>[]>([]);
+  const [gardenListOpen, setGardenListOpen] = useState(false);
+  const [garden, setGarden] = useState<string | null>(null);
+
+  useEffect(() => {
+    const effect = async () => {
+      const gardensCollection = await getDocs(collection(db, 'gardens'));
+      const gardens: ItemType<string>[] = [];
+      gardensCollection.forEach(doc => {
+        const garden = doc.data() as Garden;
+        gardens.push({
+          value: doc.id,
+          label: `${garden.streetName}${garden.houseNumber ? ', ' + garden.houseNumber + ' ' : ''}${garden.nickname ? '(' + garden.nickname + ')' : ''}`,
+        });
+      });
+
+      setGardens(gardens);
+    };
+
+    effect();
+  }, []);
+
+  const [harvesting, setHarvesting] = useState(false);
+  const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
+
+  const logAttendance = () => {
+    const attendance: Attendance = {
+      date: getDateString(),
+      garden: doc(db, 'gardens', garden ?? ''),
+    };
+
+    addDoc(
+      collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
+      attendance
+    ).then(() => {
+      Toast.show({ type: 'info', text1: t('attendanceLogged') });
+      setAttendanceLogged(true);
+    });
+  };
 
   return (
     <SafeAreaView style={styles.centeredView}>
       {loggedIn ? (
-        <HarvestForm />
+        <>
+          {!harvesting && <Welcome />}
+          <DropDownPicker
+            placeholder={t('selectGarden')}
+            open={gardenListOpen}
+            setOpen={setGardenListOpen}
+            value={garden}
+            setValue={setGarden}
+            items={gardens}
+            setItems={setGardens}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdown}
+          />
+          {harvesting && (
+            <>
+              <HarvestForm garden={garden ?? ''} />
+              <Button title={t('back')} onPress={() => setHarvesting(false)} />
+            </>
+          )}
+          {!harvesting && garden && (
+            <>
+              <Button
+                title={t('startHarvest')}
+                onPress={() => setHarvesting(true)}
+              />
+              {!attendanceLogged && (
+                <Button title={t('logAttendance')} onPress={logAttendance} />
+              )}
+            </>
+          )}
+        </>
       ) : (
         <>
           <Text>{t('signInWarning')}</Text>

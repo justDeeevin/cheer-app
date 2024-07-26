@@ -18,7 +18,6 @@ import {
   getDocs,
   getDoc,
   DocumentReference,
-  Timestamp,
 } from 'firebase/firestore';
 import { useLocales } from 'expo-localization';
 import {
@@ -32,7 +31,7 @@ import { ref, set } from 'firebase/database';
 import { useList } from 'react-firebase-hooks/database';
 import { getDateString } from '@/utility/functions';
 
-export default function HarvestForm() {
+export default function HarvestForm({ garden }: { garden: string }) {
   const locales = useLocales();
   const locale = locales[0].languageCode ?? '';
 
@@ -40,28 +39,6 @@ export default function HarvestForm() {
   const t = i18n.t.bind(i18n);
 
   const { db, auth, realtime } = useContext(firebaseContext);
-
-  const [gardens, setGardens] = useState<ItemType<string>[]>([]);
-  const [gardenListOpen, setGardenListOpen] = useState(false);
-  const [garden, setGarden] = useState<string | null>(null);
-
-  useEffect(() => {
-    const effect = async () => {
-      const gardensCollection = await getDocs(collection(db, 'gardens'));
-      const gardens: ItemType<string>[] = [];
-      gardensCollection.forEach(doc => {
-        const garden = doc.data() as Garden;
-        gardens.push({
-          value: doc.id,
-          label: `${garden.streetName}${garden.houseNumber ? ', ' + garden.houseNumber + ' ' : ''}${garden.nickname ? '(' + garden.nickname + ')' : ''}`,
-        });
-      });
-
-      setGardens(gardens);
-    };
-
-    effect();
-  }, []);
 
   const [crops, setCrops] = useState<ItemType<string>[]>([]);
   const [cropListOpen, setCropListOpen] = useState(false);
@@ -126,7 +103,7 @@ export default function HarvestForm() {
       attendance
     );
 
-    Toast.show({ type: 'info', text1: 'Attendance logged' });
+    Toast.show({ type: 'info', text1: t('attendanceLogged') });
   };
 
   const [harvestsData, harvestsLoading, _] = useList(
@@ -152,7 +129,7 @@ export default function HarvestForm() {
     const harvest: Harvest = {
       date: getDateString(),
       person: doc(db, 'people', auth.currentUser?.uid ?? ''),
-      garden: doc(db, 'gardens', garden ?? ''),
+      garden: doc(db, 'gardens', garden),
       crop: doc(db, 'crops', crop ?? ''),
     };
 
@@ -182,17 +159,6 @@ export default function HarvestForm() {
 
   return (
     <View style={styles.centeredView}>
-      <DropDownPicker
-        placeholder={t('selectGarden')}
-        open={gardenListOpen}
-        setOpen={setGardenListOpen}
-        value={garden}
-        setValue={setGarden}
-        items={gardens}
-        setItems={setGardens}
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropdown}
-      />
       {garden && (
         <DropDownPicker
           placeholder={t('selectCrop')}
