@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
-import { Text, ActivityIndicator, Button } from 'react-native';
+import { Text, ActivityIndicator } from 'react-native';
+import Button from '@/components/Button';
 import { firebaseContext } from '@/context';
 import {
   GoogleAuthProvider,
@@ -111,16 +112,14 @@ export default function User() {
     <SafeAreaView style={styles.centeredView}>
       {userInfo && fireUser && (
         <>
-          <Text>
-            {' '}
-            {t('hello')}{' '}
-            {`${userInfo.firstName} ${userInfo.lastName} <${fireUser.email}>`}{' '}
+          <Text style={styles.text}>
+            {`${t('hello')} ${userInfo.firstName} ${userInfo.lastName}`}
           </Text>
+          <Text style={styles.text}>{`<${fireUser.email}>`}</Text>
           <Button title={t('signOut')} onPress={signOut} />
         </>
       )}
       {fireUser && !userInfo && <ActivityIndicator />}
-      {/*error && <Text> {error} </Text>*/}
       {!fireUser && (
         <GoogleSigninButton
           size={GoogleSigninButton.Size.Wide}

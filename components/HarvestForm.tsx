@@ -5,8 +5,8 @@ import {
   ActivityIndicator,
   Keyboard,
   TextInput,
-  Button,
 } from 'react-native';
+import Button from '@/components/Button';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
@@ -170,6 +170,7 @@ export default function HarvestForm({ garden }: { garden: string }) {
           setItems={setCrops}
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdown}
+          textStyle={styles.text}
           searchable={true}
           searchPlaceholder="Search..."
         />
@@ -206,12 +207,12 @@ export default function HarvestForm({ garden }: { garden: string }) {
               }}
               style={styles.input}
             />
-            <Text>{unit?.name}</Text>
+            <Text style={styles.text}>{unit?.name}</Text>
           </View>
           {harvestsLoading ? (
             <ActivityIndicator />
           ) : (
-            <Text>
+            <Text style={styles.text}>
               {t('totalToday')}: {totalToday}
             </Text>
           )}

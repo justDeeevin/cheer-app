@@ -1,6 +1,7 @@
-import { Text } from "react-native";
-import { useCameraPermission } from "react-native-vision-camera";
-import { useEffect } from "react";
+import { Text } from 'react-native';
+import { useCameraPermission } from 'react-native-vision-camera';
+import { useEffect } from 'react';
+import { styles } from '@/constants/style';
 
 export function PermissionsPage() {
   const { requestPermission } = useCameraPermission();
@@ -9,5 +10,5 @@ export function PermissionsPage() {
     requestPermission();
   }, []);
 
-  return <Text> Camera permissions required </Text>;
+  return <Text style={styles.text}> Camera permissions required </Text>;
 }

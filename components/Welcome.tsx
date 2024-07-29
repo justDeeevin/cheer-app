@@ -27,7 +27,7 @@ export default function Welcome() {
   return (
     <View>
       {fullName ? (
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+        <Text style={{ fontSize: 40, fontWeight: 'bold' }}>
           {t('hello')}, {fullName}.
         </Text>
       ) : (

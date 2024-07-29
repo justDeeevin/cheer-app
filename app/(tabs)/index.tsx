@@ -1,4 +1,5 @@
-import { Button, Text } from 'react-native';
+import { Text } from 'react-native';
+import Button from '@/components/Button';
 import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { loggedInContext } from '@/context';
@@ -77,6 +78,7 @@ export default function Index() {
             setItems={setGardens}
             style={styles.dropdown}
             dropDownContainerStyle={styles.dropdown}
+            textStyle={styles.text}
           />
           {harvesting && (
             <>
@@ -98,7 +100,7 @@ export default function Index() {
         </>
       ) : (
         <>
-          <Text>{t('signInWarning')}</Text>
+          <Text style={styles.text}>{t('signInWarning')}</Text>
           <Link href="/user" asChild>
             <Button title={t('goToUser')} />
           </Link>

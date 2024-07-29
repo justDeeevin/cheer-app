@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
 import { Link } from 'expo-router';
-import { Button } from 'react-native';
+import Button from '@/components/Button';
 import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
@@ -117,6 +117,7 @@ export default function Attendance() {
                 setItems={setGardens}
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdown}
+                textStyle={styles.text}
               />
               {garden && (
                 <Button title={t('logAttendance')} onPress={logAttendance} />
@@ -126,7 +127,7 @@ export default function Attendance() {
         </>
       ) : (
         <>
-          <Text>{t('signInWarning')}</Text>
+          <Text style={styles.text}>{t('signInWarning')}</Text>
           <Link href="/user" asChild>
             <Button title={t('goToUser')} />
           </Link>
