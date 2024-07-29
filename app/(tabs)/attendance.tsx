@@ -5,13 +5,7 @@ import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
 import { attendanceContext, firebaseContext, loggedInContext } from '@/context';
-import {
-  Timestamp,
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-} from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { Attendance as AttendanceObject, Garden } from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
@@ -101,9 +95,16 @@ export default function Attendance() {
         <>
           <Calendar
             markedDates={markedDates}
-            theme={{ arrowColor: '#0101FF', todayTextColor: '#0101FF' }}
+            theme={{
+              arrowColor: '#0101FF',
+              todayTextColor: '#0101FF',
+              textDayFontSize: 20,
+              textMonthFontSize: 20,
+              textDayHeaderFontSize: 16,
+            }}
             disabledByDefault
             disableAllTouchEventsForDisabledDays
+            style={{ width: 250 }}
           />
           {!attendanceLogged && (
             <>
