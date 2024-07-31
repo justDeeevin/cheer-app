@@ -22,11 +22,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="attendance"
+        name="participation"
         options={{
           // Here, `undefined` makes it use the tab name as the href
           href: loggedIn ? undefined : null,
-          title: t('attendance'),
+          title: t('participation'),
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="calendar-check-o" color={color} />
           ),

@@ -22,6 +22,6 @@ export const firebaseContext = createContext<FirebaseContext>({
 
 export const loggedInContext = createContext<boolean>(false);
 
-export const attendanceContext = createContext<
+export const participationContext = createContext<
   [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 >([false, () => {}]);

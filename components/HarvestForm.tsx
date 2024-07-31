@@ -10,7 +10,7 @@ import Button from '@/components/Button';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
-import { firebaseContext, attendanceContext } from '@/context';
+import { firebaseContext, participationContext } from '@/context';
 import {
   addDoc,
   collection,
@@ -24,7 +24,7 @@ import {
   Harvest,
   HarvestMeasure,
   RealtimeHarvest,
-  Attendance,
+  Participation,
 } from '@/types/firestore';
 import Toast from 'react-native-toast-message';
 import { ref, set } from 'firebase/database';
@@ -90,20 +90,21 @@ export default function HarvestForm({ garden }: { garden: string }) {
     measureInputRef.current?.blur();
   });
 
-  const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
+  const [participationLogged, setParticipationLogged] =
+    useContext(participationContext);
 
-  const logAttendance = async () => {
-    setAttendanceLogged(true);
-    const attendance: Attendance = {
+  const logParticipation = async () => {
+    setParticipationLogged(true);
+    const participation: Participation = {
       date: getDateString(),
       garden: doc(db, 'gardens', garden),
     };
     addDoc(
-      collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
-      attendance
+      collection(db, 'people', auth.currentUser?.uid ?? '', 'participation'),
+      participation
     );
 
-    Toast.show({ type: 'info', text1: t('attendanceLogged') });
+    Toast.show({ type: 'info', text1: t('participationLogged') });
   };
 
   const [harvestsData, harvestsLoading, _] = useList(
@@ -143,7 +144,7 @@ export default function HarvestForm({ garden }: { garden: string }) {
       harvestMeasure
     );
 
-    if (!attendanceLogged) logAttendance();
+    if (!participationLogged) logParticipation();
   };
 
   const [totalToday, setTotalToday] = useState(0);

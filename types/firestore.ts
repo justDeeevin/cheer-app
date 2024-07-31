@@ -28,7 +28,7 @@ export interface Garden {
   nickname: string;
 }
 
-export interface Attendance {
+export interface Participation {
   date: string;
   garden: DocumentReference;
 }

@@ -4,16 +4,23 @@ import Button from '@/components/Button';
 import { useContext, useState, useEffect } from 'react';
 import { i18nContext } from '@/i18n';
 import { styles } from '@/constants/style';
-import { attendanceContext, firebaseContext, loggedInContext } from '@/context';
+import {
+  participationContext,
+  firebaseContext,
+  loggedInContext,
+} from '@/context';
 import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
-import { Attendance as AttendanceObject, Garden } from '@/types/firestore';
+import {
+  Participation as ParticipationInterface,
+  Garden,
+} from '@/types/firestore';
 import { Calendar } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
 import { getDateString } from '@/utility/functions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Attendance() {
+export default function Participation() {
   const i18n = useContext(i18nContext);
   const t = i18n.t.bind(i18n);
 
@@ -39,20 +46,21 @@ export default function Attendance() {
     effect();
   }, []);
 
-  const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
+  const [participationLogged, setParticipationLogged] =
+    useContext(participationContext);
 
   const { db, auth } = useContext(firebaseContext);
   const loggedIn = useContext(loggedInContext);
 
-  const logAttendance = async () => {
-    setAttendanceLogged(true);
-    const attendance: AttendanceObject = {
+  const logParticipation = async () => {
+    setParticipationLogged(true);
+    const Participation: ParticipationInterface = {
       date: getDateString(),
       garden: doc(db, 'gardens', garden ?? ''),
     };
     addDoc(
-      collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
-      attendance
+      collection(db, 'people', auth.currentUser?.uid ?? '', 'participation'),
+      Participation
     );
   };
 
@@ -60,26 +68,26 @@ export default function Attendance() {
 
   useEffect(() => {
     const effect = async () => {
-      const attendanceCollection = await getDocs(
-        collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
+      const participationCollection = await getDocs(
+        collection(db, 'people', auth.currentUser?.uid ?? '', 'participation')
       );
-      const attendance: MarkedDates = {};
-      attendanceCollection.forEach(doc => {
-        const attendanceDoc = doc.data() as AttendanceObject;
-        attendance[attendanceDoc.date] = {
+      const participation: MarkedDates = {};
+      participationCollection.forEach(doc => {
+        const participationDoc = doc.data() as ParticipationInterface;
+        participation[participationDoc.date] = {
           selected: true,
           selectedColor: '#7CFC00',
         };
       });
 
-      setMarkedDates(attendance);
+      setMarkedDates(participation);
     };
 
     effect();
   }, []);
 
   useEffect(() => {
-    if (attendanceLogged)
+    if (participationLogged)
       setMarkedDates({
         [getDateString()]: {
           selected: true,
@@ -87,7 +95,7 @@ export default function Attendance() {
         },
         ...markedDates,
       });
-  }, [attendanceLogged]);
+  }, [participationLogged]);
 
   return (
     <SafeAreaView style={styles.centeredView}>
@@ -106,7 +114,7 @@ export default function Attendance() {
             disableAllTouchEventsForDisabledDays
             style={{ width: 250 }}
           />
-          {!attendanceLogged && (
+          {!participationLogged && (
             <>
               <DropDownPicker
                 placeholder={t('selectGarden')}
@@ -121,7 +129,10 @@ export default function Attendance() {
                 textStyle={styles.text}
               />
               {garden && (
-                <Button title={t('logAttendance')} onPress={logAttendance} />
+                <Button
+                  title={t('logParticipation')}
+                  onPress={logParticipation}
+                />
               )}
             </>
           )}

@@ -3,14 +3,14 @@ import {
   firebaseContext,
   loggedInContext,
   FirebaseContext,
-  attendanceContext,
+  participationContext,
 } from '@/context';
 import { auth as authImport, db, storage, realtime } from '@/firebaseConfig';
 import { i18nContext, useI18n } from '@/i18n';
 import { useState, useEffect } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
 import { getDateString } from '@/utility/functions';
-import { Attendance } from '@/types/firestore';
+import { Participation } from '@/types/firestore';
 
 export default function Layout() {
   const i18n = useI18n();
@@ -33,28 +33,30 @@ export default function Layout() {
     }
   });
 
-  const [attendanceLogged, setAttendanceLogged] = useState(false);
+  const [participationLogged, setParticipationLogged] = useState(false);
   useEffect(() => {
     const effect = async () => {
       if (!auth.currentUser?.uid) return;
-      const attendanceCollection = await getDocs(
-        collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance')
+      const participationCollection = await getDocs(
+        collection(db, 'people', auth.currentUser?.uid ?? '', 'participation')
       );
       if (
-        attendanceCollection.docs.find(doc => {
-          const data = doc.data() as Attendance;
+        participationCollection.docs.find(doc => {
+          const data = doc.data() as Participation;
           const loggedDate = data.date;
           return loggedDate === getDateString();
         })
       )
-        setAttendanceLogged(true);
+        setParticipationLogged(true);
     };
 
     effect();
   }, [auth.currentUser?.uid]);
 
   return (
-    <attendanceContext.Provider value={[attendanceLogged, setAttendanceLogged]}>
+    <participationContext.Provider
+      value={[participationLogged, setParticipationLogged]}
+    >
       <i18nContext.Provider value={i18n}>
         <loggedInContext.Provider value={loggedIn}>
           <firebaseContext.Provider value={firebaseState}>
@@ -64,6 +66,6 @@ export default function Layout() {
           </firebaseContext.Provider>
         </loggedInContext.Provider>
       </i18nContext.Provider>
-    </attendanceContext.Provider>
+    </participationContext.Provider>
   );
 }

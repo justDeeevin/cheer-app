@@ -8,9 +8,9 @@ import { styles } from '@/constants/style';
 import HarvestForm from '@/components/HarvestForm';
 import Welcome from '@/components/Welcome';
 import Toast from 'react-native-toast-message';
-import { attendanceContext, firebaseContext } from '@/context';
+import { participationContext, firebaseContext } from '@/context';
 import { addDoc, collection, getDocs, doc } from 'firebase/firestore';
-import { Attendance, Garden } from '@/types/firestore';
+import { Participation, Garden } from '@/types/firestore';
 import { getDateString } from '@/utility/functions';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,20 +46,21 @@ export default function Index() {
   }, []);
 
   const [harvesting, setHarvesting] = useState(false);
-  const [attendanceLogged, setAttendanceLogged] = useContext(attendanceContext);
+  const [participationLogged, setParticipationLogged] =
+    useContext(participationContext);
 
-  const logAttendance = () => {
-    const attendance: Attendance = {
+  const logParticipation = () => {
+    const participation: Participation = {
       date: getDateString(),
       garden: doc(db, 'gardens', garden ?? ''),
     };
 
     addDoc(
-      collection(db, 'people', auth.currentUser?.uid ?? '', 'attendance'),
-      attendance
+      collection(db, 'people', auth.currentUser?.uid ?? '', 'participation'),
+      participation
     ).then(() => {
-      Toast.show({ type: 'info', text1: t('attendanceLogged') });
-      setAttendanceLogged(true);
+      Toast.show({ type: 'info', text1: t('participationLogged') });
+      setParticipationLogged(true);
     });
   };
 
@@ -92,8 +93,11 @@ export default function Index() {
                 title={t('startHarvest')}
                 onPress={() => setHarvesting(true)}
               />
-              {!attendanceLogged && (
-                <Button title={t('logAttendance')} onPress={logAttendance} />
+              {!participationLogged && (
+                <Button
+                  title={t('logParticipation')}
+                  onPress={logParticipation}
+                />
               )}
             </>
           )}
