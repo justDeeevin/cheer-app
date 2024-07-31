@@ -7,11 +7,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  dropdown: { width: 250, alignSelf: 'center', margin: 4 },
+  dropdown: { width: 250, alignSelf: 'center', margin: 8 },
 
   input: {
     width: 200,
-    margin: 4,
+    margin: 8,
     borderWidth: 1,
     padding: 10,
     backgroundColor: 'white',
