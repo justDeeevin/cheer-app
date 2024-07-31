@@ -197,12 +197,11 @@ export default function HarvestForm({ garden }: { garden: string }) {
                   )
                 )
                   setMeasure(
-                    text
-                      .replace(/,|-| /g, '')
-                      .replace(
-                        /(\.?)\.*([0-9]*)(\.?)\.*([0-9]*)\.*/g,
-                        '$1$2$3$4'
-                      )
+                    text.replace(/,|-| /g, '').replace(
+                      // matches the possible text, capturing only the desired output
+                      /(\.?)\.*([0-9]*)(\.?)\.*([0-9]{0,2})(?:\.|[0-9])*/g,
+                      '$1$2$3$4'
+                    )
                   );
               }}
               style={styles.input}
@@ -213,7 +212,11 @@ export default function HarvestForm({ garden }: { garden: string }) {
             <ActivityIndicator />
           ) : (
             <Text style={styles.text}>
-              {t('totalToday')}: {totalToday}
+              {t('totalToday')}:{' '}
+              {totalToday.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Text>
           )}
         </>
